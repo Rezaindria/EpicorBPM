@@ -13,7 +13,7 @@
            
                  < IsEnabled > True </ IsEnabled >
            
-                 < ReenterMax > 1000 </ ReenterMax >
+                 < ReenterMax > 10001 </ ReenterMax >
            
                  < PreventDeadloops > False </ PreventDeadloops >
            
