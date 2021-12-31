@@ -6,7 +6,7 @@
       <BpMethodCode>Erp.ABCCode.Update</BpMethodCode>
       <Name>123</Name>
       <Order>10</Order>
-      <IsEnabled>False</IsEnabled>
+      <IsEnabled>True</IsEnabled>
       <ReenterMax>1000</ReenterMax>
       <PreventDeadloops>False</PreventDeadloops>
       <VisibilityScope>0</VisibilityScope>
