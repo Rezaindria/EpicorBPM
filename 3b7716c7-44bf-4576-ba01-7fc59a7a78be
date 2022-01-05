@@ -6,7 +6,7 @@
       <BpMethodCode>Erp.PO.Update</BpMethodCode>
       <Name>PO - Due Date Changed-MSOM-Notification</Name>
       <Order>10</Order>
-      <IsEnabled>False</IsEnabled>
+      <IsEnabled>True</IsEnabled>
       <ReenterMax>1000</ReenterMax>
       <PreventDeadloops>False</PreventDeadloops>
       <VisibilityScope>0</VisibilityScope>
