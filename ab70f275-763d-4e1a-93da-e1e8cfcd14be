@@ -6,7 +6,7 @@
       <BpMethodCode>Erp.DropShipHead.Update</BpMethodCode>
       <Name>UpdateTrackingNumber</Name>
       <Order>10</Order>
-      <IsEnabled>False</IsEnabled>
+      <IsEnabled>True</IsEnabled>
       <ReenterMax>1000</ReenterMax>
       <PreventDeadloops>False</PreventDeadloops>
       <VisibilityScope>1</VisibilityScope>
@@ -32,7 +32,7 @@ if( v!= null)
     {
       
       bool isInt = Int32.TryParse(v.PackSlip, out PackNum);
-      //Convert.ToInt32(v.PackSlip);
+      //Convert.ToInt32(v.PackSlip); 12
       var cship = Db.ShipHead.Where(y=&gt; y.Company ==  vend.VendorID &amp;&amp; y.PackNum == PackNum).FirstOrDefault();
       if( cship != null)
       {
