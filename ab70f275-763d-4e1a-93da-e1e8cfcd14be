@@ -6,7 +6,7 @@
       <BpMethodCode>Erp.DropShipHead.Update</BpMethodCode>
       <Name>UpdateTrackingNumber</Name>
       <Order>10</Order>
-      <IsEnabled>True</IsEnabled>
+      <IsEnabled>False</IsEnabled>
       <ReenterMax>1000</ReenterMax>
       <PreventDeadloops>False</PreventDeadloops>
       <VisibilityScope>1</VisibilityScope>
