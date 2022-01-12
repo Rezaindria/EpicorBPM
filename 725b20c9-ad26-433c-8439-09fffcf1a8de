@@ -1,0 +1,59 @@
+<File>
+  <BPM_details>
+    <Details>
+      <DirectiveID>725b20c9-ad26-433c-8439-09fffcf1a8de</DirectiveID>
+      <Source>DB</Source>
+      <BpMethodCode>Erp.JobHead.Update</BpMethodCode>
+      <Name>DeletedRecordUD0520180615</Name>
+      <Order>12</Order>
+      <IsEnabled>True</IsEnabled>
+      <ReenterMax>1000</ReenterMax>
+      <PreventDeadloops>False</PreventDeadloops>
+      <VisibilityScope>1</VisibilityScope>
+      <Company>HA</Company>
+      <DirectiveGroup>Habasit_JobHead_Encompass</DirectiveGroup>
+      <IsUpToDate>True</IsUpToDate>
+      <CGCCode></CGCCode>
+      <Body>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;DirectiveDefinition mc:Ignorable="p" AdditionalUsings="" Version="116" xmlns="clr-namespace:Ice.Lib.Bpm.Model;assembly=Ice.Lib.Bpm.Shared" xmlns:av="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:cm="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro" xmlns:icbb="clr-namespace:Ice.Contracts.BO.BpMethod;assembly=Ice.Contracts.BO.BpMethod" xmlns:ilbma="clr-namespace:Ice.Lib.Bpm.Model.Actions;assembly=Ice.Lib.Bpm.Shared" xmlns:ilbmc="clr-namespace:Ice.Lib.Bpm.Model.Conditions;assembly=Ice.Lib.Bpm.Shared" xmlns:iubd="clr-namespace:Ice.UI.Bpm.Designer;assembly=Ice.UI.Bpm.Designer" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:p="http://epicor.com/BpmDesigner/Ignorable" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=mscorlib" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"&gt;&lt;DirectiveDefinition.AdditionalReferences&gt;&lt;scg:List x:TypeArguments="icbb:ReferencesGroup" Capacity="4"&gt;&lt;icbb:ReferencesGroup IsEditable="True" IsStandard="False" Name="Assemblies"&gt;&lt;icbb:ReferencesGroup.References&gt;&lt;scg:Dictionary x:TypeArguments="x:String, icbb:ReferenceInfo" /&gt;&lt;/icbb:ReferencesGroup.References&gt;&lt;/icbb:ReferencesGroup&gt;&lt;icbb:ReferencesGroup IsEditable="True" IsStandard="False" Name="Externals"&gt;&lt;icbb:ReferencesGroup.References&gt;&lt;scg:Dictionary x:TypeArguments="x:String, icbb:ReferenceInfo" /&gt;&lt;/icbb:ReferencesGroup.References&gt;&lt;/icbb:ReferencesGroup&gt;&lt;icbb:ReferencesGroup IsEditable="True" IsStandard="True" Name="Standard"&gt;&lt;icbb:ReferencesGroup.References&gt;&lt;scg:Dictionary x:TypeArguments="x:String, icbb:ReferenceInfo" /&gt;&lt;/icbb:ReferencesGroup.References&gt;&lt;/icbb:ReferencesGroup&gt;&lt;/scg:List&gt;&lt;/DirectiveDefinition.AdditionalReferences&gt;&lt;DirectiveDefinition.Nodes&gt;&lt;x:Reference&gt;__ReferenceID0&lt;/x:Reference&gt;&lt;x:Reference&gt;__ReferenceID1&lt;/x:Reference&gt;&lt;/DirectiveDefinition.Nodes&gt;&lt;DirectiveDefinition.StartNode&gt;&lt;DirectiveCondition False="{x:Null}" x:Name="__ReferenceID1" DisplayName="Condition 0" Id="40017dd0-fca4-4c2f-ad6a-e72f36577327"&gt;&lt;DirectiveCondition.Condition&gt;&lt;ConditionBlock&gt;&lt;ConditionBlock.Items&gt;&lt;ConditionBlockItem Postfix="{x:Null}" Prefix="{x:Null}" Operator="None"&gt;&lt;ConditionBlockItem.Condition&gt;&lt;ilbmc:RowWithStatusCondition VisualProperties="{x:Null}" Id="0" IsExtensionTable="False" RowsFilter="Deleted" TableName="ttJobHead" TableRowTypeName="Erp.Bpm.TempTables.JobHeadTempRow" ValidationState="Valid" /&gt;&lt;/ConditionBlockItem.Condition&gt;&lt;/ConditionBlockItem&gt;&lt;/ConditionBlock.Items&gt;&lt;/ConditionBlock&gt;&lt;/DirectiveCondition.Condition&gt;&lt;DirectiveCondition.True&gt;&lt;DirectiveStep Next="{x:Null}" x:Name="__ReferenceID0" DisplayName="Execute Custom Code 0" Id="4a0ce894-0ac6-4bc1-a063-bfef69c7173f"&gt;&lt;DirectiveStep.Action&gt;&lt;ilbma:CustomCodeAction PrimaryTable="{x:Null}" Code="/****  DELETE RECORDS UD05 ****/
+
+try{
+var ttJobIterator = (from item in ttJobHead  
+										where string.Equals(item.RowMod,IceRow.ROWSTATE_DELETED)
+										select item).ToList();
+
+
+for(int i=0; i &lt; ttJobIterator.Count; i++ )
+{
+	var ttJobRow = ttJobIterator[i];
+using (var txScope = IceContext.CreateDefaultTransactionScope())
+{
+	foreach(var ttUD05_xRow in (from item in Db.UD05
+									where item.Key1 == ttJobRow.JobNum
+									select item ))
+									
+		//	var ttUD05_xRows=						from item in Db.UD05
+   //               where item.Key1 == ttJobRow.JobNum
+  //                select item ;1
+	//foreach (var ttUD05_xRow in ttUD05_xRows)
+	{
+	
+		Db.UD05.Delete(ttUD05_xRow);
+
+	}	
+	Db.Validate();
+	txScope.Complete();
+}
+}
+}
+catch(Exception ex)
+{
+this.PublishInfoMessage(ex.ToString(), Ice.Common.BusinessObjectMessageType.Information, Ice.Bpm.InfoMessageDisplayMode.Individual, "FirstVar","SecondVar");
+}
+
+
+" ExecutionRule="OnceForAllMatching" Id="0" IsAsync="False" RecordMode="Nothing" TerminateOnError="False" ValidationState="Valid" /&gt;&lt;/DirectiveStep.Action&gt;&lt;DirectiveStep.VisualProperties&gt;&lt;p:VisualPropertiesStorage&gt;&lt;x:Double x:Key="ElementX"&gt;292.99999999999994&lt;/x:Double&gt;&lt;x:Double x:Key="ElementY"&gt;354.03999999999996&lt;/x:Double&gt;&lt;iubd:TextNote Text="{x:Null}" x:Key="Note" Background="Yellow" IsExpanded="False" IsNotifying="True" X="0" Y="0" /&gt;&lt;/p:VisualPropertiesStorage&gt;&lt;/DirectiveStep.VisualProperties&gt;&lt;/DirectiveStep&gt;&lt;/DirectiveCondition.True&gt;&lt;DirectiveCondition.VisualProperties&gt;&lt;p:VisualPropertiesStorage&gt;&lt;x:Double x:Key="ElementX"&gt;472&lt;/x:Double&gt;&lt;x:Double x:Key="ElementY"&gt;176.04&lt;/x:Double&gt;&lt;iubd:TextNote Text="{x:Null}" x:Key="Note" Background="Yellow" IsExpanded="False" IsNotifying="True" X="0" Y="0" /&gt;&lt;iubd:LinkProperties x:Key="TrueExitLink" DestinationConnectorId="0" SourceConnectorId="7"&gt;&lt;iubd:LinkProperties.Points&gt;&lt;cm:BindableCollection x:TypeArguments="av:Point" IsNotifying="True"&gt;&lt;av:Point&gt;472,221.04&lt;/av:Point&gt;&lt;av:Point&gt;326.333333333333,354.04&lt;/av:Point&gt;&lt;/cm:BindableCollection&gt;&lt;/iubd:LinkProperties.Points&gt;&lt;/iubd:LinkProperties&gt;&lt;/p:VisualPropertiesStorage&gt;&lt;/DirectiveCondition.VisualProperties&gt;&lt;/DirectiveCondition&gt;&lt;/DirectiveDefinition.StartNode&gt;&lt;DirectiveDefinition.Variables&gt;&lt;scg:List x:TypeArguments="DirectiveVariable" Capacity="0" /&gt;&lt;/DirectiveDefinition.Variables&gt;&lt;DirectiveDefinition.VisualProperties&gt;&lt;p:VisualPropertiesStorage&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Designer.Plugins.NotificationViewModelInstanceCounter"&gt;0&lt;/x:Int32&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Designer.Plugins.BAMAutoPrintViewModelInstanceCounter"&gt;0&lt;/x:Int32&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Designer.Plugins.AttachDataTagViewModelInstanceCounter"&gt;0&lt;/x:Int32&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Designer.Plugins.CallScWorkflowViewModelInstanceCounter"&gt;0&lt;/x:Int32&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Designer.Plugins.ConditionViewModelInstanceCounter"&gt;1&lt;/x:Int32&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Designer.Plugins.CustomCodeActionViewModelInstanceCounter"&gt;1&lt;/x:Int32&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Designer.Plugins.InvokeNetMethodViewModelInstanceCounter"&gt;0&lt;/x:Int32&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Designer.Plugins.RemoveDataTagViewModelInstanceCounter"&gt;0&lt;/x:Int32&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Designer.Plugins.SendMailViewModelInstanceCounter"&gt;0&lt;/x:Int32&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Designer.Plugins.SetArgumentViewModelInstanceCounter"&gt;0&lt;/x:Int32&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Designer.Plugins.SetBpmDataFieldViewModelInstanceCounter"&gt;0&lt;/x:Int32&gt;&lt;x:Double x:Key="ElementX"&gt;11&lt;/x:Double&gt;&lt;x:Double x:Key="ElementY"&gt;10&lt;/x:Double&gt;&lt;iubd:TextNote Text="{x:Null}" x:Key="Note" Background="Yellow" IsExpanded="False" IsNotifying="True" X="0" Y="0" /&gt;&lt;iubd:LinkProperties x:Key="ExitLink" DestinationConnectorId="1" SourceConnectorId="10"&gt;&lt;iubd:LinkProperties.Points&gt;&lt;cm:BindableCollection x:TypeArguments="av:Point" IsNotifying="True"&gt;&lt;av:Point&gt;131,55&lt;/av:Point&gt;&lt;av:Point&gt;532,176.04&lt;/av:Point&gt;&lt;/cm:BindableCollection&gt;&lt;/iubd:LinkProperties.Points&gt;&lt;/iubd:LinkProperties&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Widgets.BAMAutoPrintViewModelInstanceCounter"&gt;0&lt;/x:Int32&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Widgets.CallScWorkflowViewModelInstanceCounter"&gt;0&lt;/x:Int32&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Widgets.CustomCodeActionViewModelInstanceCounter"&gt;0&lt;/x:Int32&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Widgets.AttachDataTagViewModelInstanceCounter"&gt;0&lt;/x:Int32&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Widgets.RemoveDataTagViewModelInstanceCounter"&gt;0&lt;/x:Int32&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Widgets.ConditionViewModelInstanceCounter"&gt;0&lt;/x:Int32&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Widgets.InvokeBOMethodViewModelInstanceCounter"&gt;0&lt;/x:Int32&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Widgets.InvokeEpicorFunctionViewModelInstanceCounter"&gt;0&lt;/x:Int32&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Widgets.InvokeNetMethodViewModelInstanceCounter"&gt;0&lt;/x:Int32&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Widgets.NotificationViewModelInstanceCounter"&gt;0&lt;/x:Int32&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Widgets.FillTableByQueryViewModelInstanceCounter"&gt;0&lt;/x:Int32&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Widgets.UpdateTableByQueryViewModelInstanceCounter"&gt;0&lt;/x:Int32&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Widgets.SendMailViewModelInstanceCounter"&gt;0&lt;/x:Int32&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Widgets.SetArgumentViewModelInstanceCounter"&gt;0&lt;/x:Int32&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Widgets.SetBpmDataFieldViewModelInstanceCounter"&gt;0&lt;/x:Int32&gt;&lt;/p:VisualPropertiesStorage&gt;&lt;/DirectiveDefinition.VisualProperties&gt;&lt;/DirectiveDefinition&gt;</Body>
+      <SysRevID>System.Byte[]</SysRevID>
+      <SysRowID>2fb4f4ce-70e2-4d46-93bf-667b65df2c21</SysRowID>
+    </Details>
+  </BPM_details>
+</File>
