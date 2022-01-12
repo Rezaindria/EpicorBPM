@@ -30,7 +30,7 @@ if( v!= null)
     
     if( v.PackSlip != "" || v.PackSlip != "0" ) /* Check packslip is empty */
     {
-      
+      //Convert.ToInt32(v.PackSlip); 
       bool isInt = Int32.TryParse(v.PackSlip, out PackNum);
       //Convert.ToInt32(v.PackSlip); 
       var cship = Db.ShipHead.Where(y=&gt; y.Company ==  vend.VendorID &amp;&amp; y.PackNum == PackNum).FirstOrDefault();
