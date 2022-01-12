@@ -1,0 +1,723 @@
+<File>
+  <BPM_details>
+    <Details>
+      <DirectiveID>04367565-479c-4b41-b629-282c7c28f31c</DirectiveID>
+      <Source>DB</Source>
+      <BpMethodCode>Erp.OrderDtl.Update</BpMethodCode>
+      <Name>FBMFG - FB Mfg Part - DD</Name>
+      <Order>50</Order>
+      <IsEnabled>True</IsEnabled>
+      <ReenterMax>1000</ReenterMax>
+      <PreventDeadloops>False</PreventDeadloops>
+      <VisibilityScope>1</VisibilityScope>
+      <Company>HA</Company>
+      <DirectiveGroup>FBMFG - FB Mfg Part - DD</DirectiveGroup>
+      <IsUpToDate>True</IsUpToDate>
+      <CGCCode />
+      <Body>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;DirectiveDefinition mc:Ignorable="p" AdditionalUsings="using Ice.Assemblies;
+" Version="116" xmlns="clr-namespace:Ice.Lib.Bpm.Model;assembly=Ice.Lib.Bpm.Shared" xmlns:av="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:cm="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro" xmlns:icbb="clr-namespace:Ice.Contracts.BO.BpMethod;assembly=Ice.Contracts.BO.BpMethod" xmlns:ilbma="clr-namespace:Ice.Lib.Bpm.Model.Actions;assembly=Ice.Lib.Bpm.Shared" xmlns:ilbmc="clr-namespace:Ice.Lib.Bpm.Model.Conditions;assembly=Ice.Lib.Bpm.Shared" xmlns:iubd="clr-namespace:Ice.UI.Bpm.Designer;assembly=Ice.UI.Bpm.Designer" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:p="http://epicor.com/BpmDesigner/Ignorable" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=mscorlib" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"&gt;&lt;DirectiveDefinition.AdditionalReferences&gt;&lt;scg:List x:TypeArguments="icbb:ReferencesGroup" Capacity="4"&gt;&lt;icbb:ReferencesGroup IsEditable="True" IsStandard="False" Name="Assemblies"&gt;&lt;icbb:ReferencesGroup.References&gt;&lt;icbb:ReferenceInfo x:Key="Newtonsoft.Json" FileName="Newtonsoft.Json.dll" Name="Newtonsoft.Json" Version="12.0.0.0" /&gt;&lt;icbb:ReferenceInfo x:Key="Erp.Contracts.BO.VendPart" FileName="Erp.Contracts.BO.VendPart.dll" Name="Erp.Contracts.BO.VendPart" Version="10.2.500.0" /&gt;&lt;/icbb:ReferencesGroup.References&gt;&lt;/icbb:ReferencesGroup&gt;&lt;icbb:ReferencesGroup IsEditable="True" IsStandard="False" Name="Externals"&gt;&lt;icbb:ReferencesGroup.References&gt;&lt;scg:Dictionary x:TypeArguments="x:String, icbb:ReferenceInfo" /&gt;&lt;/icbb:ReferencesGroup.References&gt;&lt;/icbb:ReferencesGroup&gt;&lt;/scg:List&gt;&lt;/DirectiveDefinition.AdditionalReferences&gt;&lt;DirectiveDefinition.Nodes&gt;&lt;x:Reference&gt;__ReferenceID0&lt;/x:Reference&gt;&lt;x:Reference&gt;__ReferenceID1&lt;/x:Reference&gt;&lt;DirectiveStep Next="{x:Null}" DisplayName="Execute Custom Code 1" Id="57a2d233-b17f-459f-b8cf-94af33c41a44"&gt;&lt;DirectiveStep.Action&gt;&lt;ilbma:CustomCodeAction PrimaryTable="{x:Null}" Code="//Data Directive - populates UD fields for new part created by FBMFG configurator
+
+
+
+string processingDetails = string.Empty;
+string path = @"\\hussv022\c$\Logs\";
+string fileName = "TEST_FBMFG_SmartPart_DD_Log_" + Guid.NewGuid ().ToString () + ".txt";
+
+processingDetails = processingDetails + "Starting FBMFG Smart Part Data Directive.." + Environment.NewLine;
+//System.IO.File.AppendAllText (path + fileName, processingDetails);
+
+//fileName = "FBMFG_TEST_FBMFG_SmartPart_DD_FINISHED_LOG_" + Guid.NewGuid ().ToString () + ".txt";
+
+
+  //this.PublishInfoMessage("In Data Directive FBMFG - Smart Part..", Ice.Common.BusinessObjectMessageType.Information, Ice.Bpm.InfoMessageDisplayMode.Individual, "UserCodes","GetRows");
+                              
+            
+try
+  {
+
+  //OrderDtl.ShortChar02 contains the material.  Get the Part information from the Material part.
+  
+      foreach (var OrderDtl_iterator in (from OrderDtl_Row in ttOrderDtl 
+                                         where OrderDtl_Row.Company == Session.CompanyID &amp;&amp;
+                                              //((string)OrderDtl_Row["Character03"] != null &amp;&amp; 
+                                              //(string)OrderDtl_Row["Character03"] != string.Empty) ||
+                                              ((string)OrderDtl_Row["ShortChar02"] != null &amp;&amp; 
+                                              (string)OrderDtl_Row["ShortChar02"] != string.Empty) ||
+                                               (bool)OrderDtl_Row["Checkbox01"] == true &amp;&amp;
+                                              (OrderDtl_Row.RowMod == "A" || OrderDtl_Row.RowMod == "U")
+                                         select OrderDtl_Row))
+          {
+  
+           // this.PublishInfoMessage("Found Order Detail - Row: " + OrderDtl_iterator.OrderLine, Ice.Common.BusinessObjectMessageType.Information, Ice.Bpm.InfoMessageDisplayMode.Individual, "UserCodes","GetRows");
+                              
+            
+  
+             string jsonSnapShot = Newtonsoft.Json.JsonConvert.SerializeObject(OrderDtl_iterator);
+             processingDetails = processingDetails + (jsonSnapShot) + Environment.NewLine;
+            
+  
+  //            this.PublishInfoMessage(processingDetails, Ice.Common.BusinessObjectMessageType.Information, Ice.Bpm.InfoMessageDisplayMode.Individual, "UserCodes","GetRows");
+                              
+                          
+  
+                //string vPlant = "MDT";
+                string vPlant = callContextClient.CurrentPlant;
+                
+                // Since a new smart part is created with the method only in SUW, if the user is in company HA, we need the partplant to be SUW.                                                  
+                if (Session.CompanyID == "HA")
+                {
+                vPlant = "SUW";
+                }
+                                                   
+                string vClass = string.Empty;
+                string vPrimWarehouse = string.Empty;
+                string vPersonID = string.Empty;
+                string vPrimBin = string.Empty;
+                
+                processingDetails = processingDetails + "Found Order Detail Row..." + Environment.NewLine;
+                
+  
+                              // string jsonSnapShot = Newtonsoft.Json.JsonConvert.SerializeObject(OrderDtl_iterator);
+                              //this.PublishInfoMessage(jsonSnapShot, Ice.Common.BusinessObjectMessageType.Information, Ice.Bpm.InfoMessageDisplayMode.Individual, "UserCodes","GetRows");
+            
+                              // Get UD fields from the base configurator part e.g. SB and TB.
+                              string basePartToSearch = "";
+                              string companyToSearch = Session.CompanyID;
+                              
+                               if (OrderDtl_iterator.ShortChar02 != null &amp;&amp; OrderDtl_iterator.ShortChar02 != string.Empty)
+                              {
+                                  basePartToSearch = OrderDtl_iterator.ShortChar02;
+                              }
+                              else
+                              {
+                                  basePartToSearch = OrderDtl_iterator.PartNum;
+                                
+                              }                            
+                    //         this.PublishInfoMessage(basePartToSearch, Ice.Common.BusinessObjectMessageType.Information, Ice.Bpm.InfoMessageDisplayMode.Individual, "UserCodes","GetRows");
+                              
+                              var basePart = (from Part_Row in Db.Part
+                                      where Part_Row.Company == companyToSearch &amp;&amp;
+                                                      string.Compare(Part_Row.PartNum,  basePartToSearch, true) == 0
+                                                      select Part_Row).FirstOrDefault();
+                              if (basePart != null)
+                                {
+                                      processingDetails = processingDetails + "Found Base Part..." + basePart.PartNum + Environment.NewLine;
+  
+                                      // Need to get part plant and primary warehouse information
+                                      var originalPartPlant = (from PartPlant_Row in Db.PartPlant
+                                                              where PartPlant_Row.Company == Session.CompanyID &amp;&amp;
+                                                                    PartPlant_Row.Plant == vPlant &amp;&amp;
+                                                                    PartPlant_Row.PartNum == basePartToSearch
+                                                              select PartPlant_Row).FirstOrDefault();
+      
+                                          if (originalPartPlant != null)
+                                          {
+                                                 processingDetails = processingDetails + "Found base Part Plant..." + originalPartPlant.Plant + Environment.NewLine;
+  
+                                                  vPersonID = originalPartPlant.PersonID;
+                                                  vPrimWarehouse = originalPartPlant.PrimWhse;        
+                                                  //  Get Primary Bin   
+                                                  var originalPlantWhse = (from PlantWhse_Row in Db.PlantWhse
+                                                              where PlantWhse_Row.Company == Session.CompanyID &amp;&amp;
+                                                                                                  PlantWhse_Row.Plant == vPlant &amp;&amp;
+                                                                                                  PlantWhse_Row.PartNum == basePartToSearch &amp;&amp;
+                                                                                                  PlantWhse_Row.WarehouseCode == vPrimWarehouse
+                                                              select PlantWhse_Row).FirstOrDefault();
+                                                  if (originalPlantWhse != null)
+                                                  {
+                                                          processingDetails = processingDetails + "Found base Plant Warehouse..." + originalPlantWhse.WarehouseCode + Environment.NewLine;
+  
+                                                          vPrimBin = originalPlantWhse.PrimBin;
+                                                           processingDetails = processingDetails + "vPrimBin..." + vPrimBin + Environment.NewLine;
+                                                  }
+                                          } //originalPartPlant
+                                          
+
+                                          
+ 
+                                      // We have our original part information copied from the configurator base part, update the newly created part.
+                                      var newPart = (from partRow in Db.Part
+                                                      where partRow.Company == Session.CompanyID &amp;&amp;
+                                                            partRow.PartNum == OrderDtl_iterator.PartNum
+                                                            select partRow).FirstOrDefault();
+                                      if (newPart != null)
+                                          {
+                                          
+                                              processingDetails = processingDetails + "Found New part..." + newPart.PartNum + " Prod Code: " + newPart.ProdCode + Environment.NewLine;
+                                              processingDetails = processingDetails + "Original Part Information:" + basePart.PartNum + " Prod Code: " + basePart.ProdCode + Environment.NewLine;
+  
+                                          
+                                              newPart.ShortChar01 = (string)basePart.ShortChar01;
+                                              newPart.ShortChar02 = (string)basePart.ShortChar02;
+                                              newPart.ShortChar03 = (string)basePart.ShortChar03;
+                                              newPart.ShortChar04 = (string)basePart.ShortChar04;
+                                              newPart.ShortChar05 = (string)basePart.ShortChar05;
+                                              newPart.ShortChar06 = (string)basePart.ShortChar06;
+                                              newPart.ShortChar07 = (string)basePart.ShortChar07;
+                                              //newPart.ShortChar08 = (string)basePart.ShortChar08;
+                                              newPart.ShortChar09 = (string)basePart.ShortChar09;
+                                              newPart.ShortChar10 = (string)basePart.ShortChar10;
+                                              newPart.ShortChar11 = (string)basePart.ShortChar11;
+                                              newPart.Number04 = (decimal)OrderDtl_iterator.Number09;
+                                              newPart.Number05 = (decimal)OrderDtl_iterator.Number01;
+                                              newPart.Number06 = (decimal)OrderDtl_iterator.Number02;
+                                              newPart.Number07 = (decimal)OrderDtl_iterator.Number03;
+                                              newPart.Number08 = (decimal)OrderDtl_iterator.Number17;
+                                              newPart.Number11 = (decimal)OrderDtl_iterator.Number21;
+                                              newPart.Number12 = (decimal)OrderDtl_iterator.Number26;
+                                              newPart.NetWeight = (decimal)OrderDtl_iterator.Number19;
+                                              newPart.ShortChar08 = (string)OrderDtl_iterator.ShortChar02;
+                                              newPart.InternalUnitPrice = (decimal)OrderDtl_iterator.Number13;
+                                              //newPart.Date01 = (DateTime?)OrderDtl_iterator.Date01;
+                                              newPart.PartDescription = (string)OrderDtl_iterator.LineDesc;
+                                              newPart.ProdCode = basePart.ProdCode;
+                                              newPart.ClassID = basePart.ClassID;
+                                              newPart.ISOrigCountry = basePart.ISOrigCountry;
+                                              newPart.Character09 = (string)OrderDtl_iterator.ShortChar08;
+                                              newPart.CostMethod = "S";
+                                              if (newPart.Company == "GLB")
+                                              {
+                                                newPart.TypeCode = "P";
+                                                newPart.ISOrigCountry = "42";
+                                              }
+                                              
+                                              Db.SaveChanges();
+                                              processingDetails = processingDetails + "Saved Changes on New Part ..." + newPart.PartNum + Environment.NewLine;
+  
+                                              // Uncomment for Debugging
+                                              //System.IO.File.AppendAllText (path + fileName, processingDetails);
+  
+                                              var partPlant = (from PartPlant_Row in Db.PartPlant
+                                                          where PartPlant_Row.Company == Session.CompanyID &amp;&amp;
+                                                                PartPlant_Row.Plant == vPlant &amp;&amp;
+                                                                PartPlant_Row.PartNum == newPart.PartNum
+                                                          select PartPlant_Row).FirstOrDefault();
+  
+                                              processingDetails = processingDetails + "Found New partPlant..." + partPlant.PartNum + " Plant: " + partPlant.Plant + Environment.NewLine;
+                                             
+                                              
+                                              if (partPlant != null)
+                                                  {
+                                                         //Update PartPlant fields - LLK
+                                                         partPlant.CostMethod = "S";
+                                                         partPlant.SourceType = "P";
+                                                         partPlant.MfgLotSize = 1M;
+                                                        
+                                                         partPlant.BuyerID = "GLBBuyer";
+                                                         partPlant.BuyToOrder = true;
+                                                         partPlant.DropShip = true;
+                                                         
+                                                         int vendorNumToSearch = 0;
+                                                         if (partPlant.Plant == "SUW")
+                                                         {
+                                                         
+                                                            vendorNumToSearch =  4827;
+                                                         }
+                                                           else if (partPlant.Plant == "GLB")
+                                                         {
+                                                            vendorNumToSearch = 1;
+                                                         }
+                                                         
+                                                         var vendorLookup = (from x in Db.Vendor
+                                                                       where x.Company == partPlant.Company &amp;&amp;
+                                                                             x.VendorNum == vendorNumToSearch
+                                                                      select x).FirstOrDefault();
+                                                                      
+                                                        if (vendorLookup != null)
+                                                        {
+                                                        
+                                                              processingDetails = processingDetails + "Found vendor and updating to: " + vendorNumToSearch.ToString() + Environment.NewLine;
+                                                              partPlant.VendorNum = vendorNumToSearch;
+                                                              partPlant.PurPoint = vendorLookup.PurPoint;
+                                                               
+                                                        }//partPlant.MfgLotSize = 123;
+                                                         Db.SaveChanges();
+                                                         processingDetails = processingDetails + "Just saved partPlant.CostMethod ..." + partPlant.CostMethod + Environment.NewLine;
+                                                         processingDetails = processingDetails + "Just saved partPlant.BuyerID ..." + partPlant.BuyerID + Environment.NewLine;
+                                                    
+                                                         //We don't think that we need Primary Bin
+                                                         // Get Primary Bin 
+                              //                         var plantWhse = (from PlantWhse_Row in Db.PlantWhse
+                              //                                      where PlantWhse_Row.Company == Session.CompanyID &amp;&amp;
+                              //                                            PlantWhse_Row.Plant == vPlant &amp;&amp;
+                              //                                            PlantWhse_Row.PartNum ==newPart.PartNum &amp;&amp;
+                              //                                            PlantWhse_Row.WarehouseCode == vPrimWarehouse
+                              //                                       select PlantWhse_Row).FirstOrDefault();
+                              //                        if (plantWhse != null)
+                              //                            {
+                              //                                plantWhse.PrimBin = vPrimBin;
+                              //                                Db.SaveChanges();
+                              //                                
+                              //                                processingDetails = processingDetails + "Just saved plantWhse.PrimBin ..." + plantWhse.PrimBin + Environment.NewLine;
+                              //                            } //plantwhse
+                                                  } //partplant
+                                                  
+                                                
+                                                // Set up the PartCost for the new part
+                                                
+                                                  
+      
+                                          var newPartCost = (from PartCost_Row in Db.PartCost
+                                                              where PartCost_Row.Company == Session.CompanyID &amp;&amp;
+                                                                    PartCost_Row.PartNum == newPart.PartNum &amp;&amp;
+                                                                    PartCost_Row.StdMaterialCost == 0 &amp;&amp;
+                                                                    PartCost_Row.StdLaborCost == 0 &amp;&amp;
+                                                                    PartCost_Row.StdBurdenCost == 0
+                                                              select PartCost_Row).FirstOrDefault();
+  
+                                              if (newPartCost != null)
+                                                  {
+                                                        
+                                                 processingDetails = processingDetails + "Updating Part Cost..." + newPartCost.PartNum + Environment.NewLine;
+  
+                                                newPartCost.StdMaterialCost = (decimal)OrderDtl_iterator.Number11;
+                                                newPartCost.StdLaborCost = (decimal)OrderDtl_iterator.Number21;
+                                                newPartCost.StdBurdenCost = (decimal)OrderDtl_iterator.Number26;
+                                                Db.SaveChanges();
+                                                     processingDetails = processingDetails + "Just saved newPartCost ..." + newPartCost.PartNum + " Std Cost: " + newPartCost.StdMaterialCost + Environment.NewLine;     
+  
+                                                   } //originalPartCost                                             
+                                                  
+
+
+              
+
+                                                //Last item - create a Suppplier Price for this vendor/part.  We need to add a new VenPart record
+                                                // Need to deterimine how we know what vendor we're adding this to - for now using 4827 as the vendorNum
+                                                  int vendorNum = 1;
+                                                  
+                                                   if (Session.CompanyID == "HA")
+                                                   {
+                                                   vendorNum = 4827;
+                                                   }
+                                                   else
+                                                    if (Session.CompanyID == "GLB")
+                                                   {
+                                                   vendorNum = 1;
+                                                   }
+
+                                                  
+                                                   var vendPartSvc = ServiceRenderer.GetService&lt;Erp.Contracts.VendPartSvcContract&gt;(Db);
+                                                   Erp.Tablesets.VendPartTableset vendPartTableset = new Erp.Tablesets.VendPartTableset();
+                                
+                                                   vendPartSvc.GetNewVendPart(ref vendPartTableset,"", "", "", vendorNum);
+                                                   bool multipleMatch = false;
+                                                   string uomCode = String.Empty;
+                                                   string questionString = String.Empty;
+                                                   string serialWarning = String.Empty;
+                                                   string partNumToAdd = newPart.PartNum;
+                                                   
+                                                   vendPartSvc.ChangePart(ref partNumToAdd, vendPartTableset.VendPart[0].SysRowID, "", ref uomCode, out serialWarning, out questionString, out multipleMatch, ref vendPartTableset);    
+                                                   vendPartSvc.ChangeVendPartPUM(ref vendPartTableset, newPart.PUM);
+                                                   vendPartSvc.Update(ref vendPartTableset);
+                                                   vendPartTableset.VendPart[0].BaseUnitPrice = (decimal)OrderDtl_iterator.Number23;
+                                                   vendPartTableset.VendPart[0].MinimumPrice = (decimal)OrderDtl_iterator.Number23;
+                                                   vendPartTableset.VendPart[0].PrimaryVendor = true;
+                                                   vendPartTableset.VendPart[0].RowMod = "U";
+                                                   
+                                                   vendPartSvc.Update(ref vendPartTableset);
+                                                   
+                                                   
+                                                   
+                                                   
+                                                   
+                                                  //newVendPart.PartNum = newPart.PartNum;
+                                                  //newVendPart.MinimumPrice = (decimal)OrderDtl_iterator.Number23;
+                                                  //newVendPart.BaseUnitPrice = (decimal)OrderDtl_iterator.Number23;
+                                                  
+                                                  
+                                                  
+                                                  
+                                                   // Uncomment for Debugging
+                                              System.IO.File.AppendAllText (path + fileName, processingDetails);                                             
+                                                  
+                                          } //newpart
+                                }                        
+        }
+        
+
+}
+catch (Exception e)
+{
+    string exceptionMessage = "OrderDtl.SmartPart - Exception Occurred while Copying UD Fields to new part: " + processingDetails + Environment.NewLine + "Exception: " + e.Message;
+    System.IO.File.AppendAllText (path + fileName, processingDetails + exceptionMessage);
+ 
+ 
+ this.PublishInfoMessage(exceptionMessage, Ice.Common.BusinessObjectMessageType.Information, Ice.Bpm.InfoMessageDisplayMode.Individual, "UserCodes","GetRows");
+         
+}" ExecutionRule="OnceForAllMatching" Id="0" IsAsync="False" RecordMode="Nothing" TerminateOnError="False" ValidationState="Valid" /&gt;&lt;/DirectiveStep.Action&gt;&lt;DirectiveStep.VisualProperties&gt;&lt;p:VisualPropertiesStorage&gt;&lt;x:Double x:Key="ElementX"&gt;988.99999999999989&lt;/x:Double&gt;&lt;x:Double x:Key="ElementY"&gt;285&lt;/x:Double&gt;&lt;iubd:TextNote Text="{x:Null}" x:Key="Note" Background="Yellow" IsExpanded="False" IsNotifying="True" X="0" Y="0" /&gt;&lt;/p:VisualPropertiesStorage&gt;&lt;/DirectiveStep.VisualProperties&gt;&lt;/DirectiveStep&gt;&lt;/DirectiveDefinition.Nodes&gt;&lt;DirectiveDefinition.StartNode&gt;&lt;DirectiveCondition False="{x:Null}" x:Name="__ReferenceID0" DisplayName="Condition 0" Id="9308d806-5105-413b-a01a-6620f89a8bfb"&gt;&lt;DirectiveCondition.Condition&gt;&lt;ConditionBlock&gt;&lt;ConditionBlock.Items&gt;&lt;ConditionBlockItem Postfix="{x:Null}" Prefix="{x:Null}" Operator="None"&gt;&lt;ConditionBlockItem.Condition&gt;&lt;ilbmc:FieldCondition VisualProperties="{x:Null}" Filter="Changed" Id="0" Operator="EqualsTo" ValidationState="Valid"&gt;&lt;ilbmc:FieldCondition.Expression&gt;&lt;ExpressionDefinition Text=""FBMFG""&gt;&lt;ExpressionDefinition.TableParameters&gt;&lt;scg:List x:TypeArguments="TableParameter" Capacity="0" /&gt;&lt;/ExpressionDefinition.TableParameters&gt;&lt;/ExpressionDefinition&gt;&lt;/ilbmc:FieldCondition.Expression&gt;&lt;ilbmc:FieldCondition.Field&gt;&lt;ColumnInfo ColumnName="BasePartNum" DataType="System.String" IsExtensionTable="False" IsUd="False" TableName="ttOrderDtl" TableRowTypeName="Erp.Bpm.TempTables.OrderDtlTempRow" /&gt;&lt;/ilbmc:FieldCondition.Field&gt;&lt;/ilbmc:FieldCondition&gt;&lt;/ConditionBlockItem.Condition&gt;&lt;/ConditionBlockItem&gt;&lt;ConditionBlockItem Postfix="{x:Null}" Prefix="{x:Null}" Operator="And"&gt;&lt;ConditionBlockItem.Condition&gt;&lt;ilbmc:FieldCondition VisualProperties="{x:Null}" Filter="Changed" Id="0" Operator="NotEqualsTo" ValidationState="Valid"&gt;&lt;ilbmc:FieldCondition.Expression&gt;&lt;ExpressionDefinition Text=""FBMFG""&gt;&lt;ExpressionDefinition.TableParameters&gt;&lt;scg:List x:TypeArguments="TableParameter" Capacity="0" /&gt;&lt;/ExpressionDefinition.TableParameters&gt;&lt;/ExpressionDefinition&gt;&lt;/ilbmc:FieldCondition.Expression&gt;&lt;ilbmc:FieldCondition.Field&gt;&lt;ColumnInfo ColumnName="PartNum" DataType="System.String" IsExtensionTable="False" IsUd="False" TableName="ttOrderDtl" TableRowTypeName="Erp.Bpm.TempTables.OrderDtlTempRow" /&gt;&lt;/ilbmc:FieldCondition.Field&gt;&lt;/ilbmc:FieldCondition&gt;&lt;/ConditionBlockItem.Condition&gt;&lt;/ConditionBlockItem&gt;&lt;ConditionBlockItem Postfix="{x:Null}" Prefix="{x:Null}" Operator="And"&gt;&lt;ConditionBlockItem.Condition&gt;&lt;ilbmc:FieldCondition VisualProperties="{x:Null}" Filter="Changed" Id="0" Operator="EqualsTo" ValidationState="Valid"&gt;&lt;ilbmc:FieldCondition.Expression&gt;&lt;ExpressionDefinition Text="false"&gt;&lt;ExpressionDefinition.TableParameters&gt;&lt;scg:List x:TypeArguments="TableParameter" Capacity="0" /&gt;&lt;/ExpressionDefinition.TableParameters&gt;&lt;/ExpressionDefinition&gt;&lt;/ilbmc:FieldCondition.Expression&gt;&lt;ilbmc:FieldCondition.Field&gt;&lt;ColumnInfo ColumnName="CheckBox19" DataType="System.Boolean" IsExtensionTable="False" IsUd="False" TableName="ttOrderDtl" TableRowTypeName="Erp.Bpm.TempTables.OrderDtlTempRow" /&gt;&lt;/ilbmc:FieldCondition.Field&gt;&lt;/ilbmc:FieldCondition&gt;&lt;/ConditionBlockItem.Condition&gt;&lt;/ConditionBlockItem&gt;&lt;/ConditionBlock.Items&gt;&lt;/ConditionBlock&gt;&lt;/DirectiveCondition.Condition&gt;&lt;DirectiveCondition.True&gt;&lt;DirectiveStep Next="{x:Null}" x:Name="__ReferenceID1" DisplayName="Execute Custom Code 0" Id="e793e5e0-f671-4b94-a6e1-905836df4dd9"&gt;&lt;DirectiveStep.Action&gt;&lt;ilbma:CustomCodeAction PrimaryTable="{x:Null}" Code="//Data Directive - populates UD fields for new part created by FBMFG configurator
+
+
+
+string processingDetails = string.Empty;
+string path = @"\\hussv022\c$\Logs\";
+string fileName = "E10DEV - FBMFG_SmartPart_DD_Log_" + Guid.NewGuid ().ToString () + ".txt";
+
+processingDetails = processingDetails + "Starting FBMFG Smart Part Data Directive.." + Environment.NewLine;
+//System.IO.File.AppendAllText (path + fileName, processingDetails);
+
+//fileName = "FBMFG_TEST_FBMFG_SmartPart_DD_FINISHED_LOG_" + Guid.NewGuid ().ToString () + ".txt";
+
+
+  //this.PublishInfoMessage("In Data Directive FBMFG - Smart Part..", Ice.Common.BusinessObjectMessageType.Information, Ice.Bpm.InfoMessageDisplayMode.Individual, "UserCodes","GetRows");
+                              
+            
+try
+  {
+
+  //OrderDtl.ShortChar02 contains the material.  Get the Part information from the Material part.
+  //OrderDtl.CheckBox19 designates that the orderdtl was changed from th Length Change program.  This logic should only fire the first time that the part is created from FBMFG
+  
+      foreach (var OrderDtl_iterator in (from OrderDtl_Row in ttOrderDtl 
+                                         where OrderDtl_Row.Company == Session.CompanyID 
+                                         &amp;&amp; OrderDtl_Row.BasePartNum  == "FBMFG" &amp;&amp; OrderDtl_Row.PartNum != "FBMFG" // TD-24-11-2001
+                                         &amp;&amp; 
+                                              //((string)OrderDtl_Row["Character03"] != null &amp;&amp; 
+                                              //(string)OrderDtl_Row["Character03"] != string.Empty) ||
+                                              //((string)OrderDtl_Row["ShortChar02"] != null &amp;&amp; 
+                                              //(string)OrderDtl_Row["ShortChar02"] != string.Empty) ||
+                                              // (bool)OrderDtl_Row["Checkbox01"] == true &amp;&amp;
+                                              // (bool)OrderDtl_Row["Checkbox19"] == false &amp;&amp;
+                                              // (OrderDtl_Row.PartNum != "FBMFG" &amp;&amp; (string)OrderDtl_Row["ShortChar02"] == "FBMFG") &amp;&amp;
+                                              (OrderDtl_Row.RowMod == "A" || OrderDtl_Row.RowMod == "U")
+                                         select OrderDtl_Row))
+          {
+  
+  
+                                      
+           // this.PublishInfoMessage("Found Order Detail - Row: " + OrderDtl_iterator.OrderLine, Ice.Common.BusinessObjectMessageType.Information, Ice.Bpm.InfoMessageDisplayMode.Individual, "UserCodes","GetRows");
+            bool firstTimePart = (bool)OrderDtl_iterator["Checkbox18"];  
+            
+           
+  
+             string jsonSnapShot = Newtonsoft.Json.JsonConvert.SerializeObject(OrderDtl_iterator);
+             processingDetails = processingDetails + (jsonSnapShot) + Environment.NewLine;
+            
+  
+  //            this.PublishInfoMessage(processingDetails, Ice.Common.BusinessObjectMessageType.Information, Ice.Bpm.InfoMessageDisplayMode.Individual, "UserCodes","GetRows");
+                              
+                          
+  
+                //string vPlant = "MDT";
+                string vPlant = callContextClient.CurrentPlant;
+                
+                // Since a new smart part is created with the method only in SUW, if the user is in company HA, we need the partplant to be SUW.                                                  
+                if (Session.CompanyID == "HA")
+                {
+                vPlant = "SUW";
+                }
+                                                   
+                string vClass = string.Empty;
+                string vPrimWarehouse = string.Empty;
+                string vPersonID = string.Empty;
+                string vPrimBin = string.Empty;
+                
+                processingDetails = processingDetails + "Found Order Detail Row..." + OrderDtl_iterator.OrderNum + "-" + OrderDtl_iterator.OrderLine + Environment.NewLine;
+                
+  
+                              // string jsonSnapShot = Newtonsoft.Json.JsonConvert.SerializeObject(OrderDtl_iterator);
+                              //this.PublishInfoMessage(jsonSnapShot, Ice.Common.BusinessObjectMessageType.Information, Ice.Bpm.InfoMessageDisplayMode.Individual, "UserCodes","GetRows");
+            
+                              // Get UD fields from the base configurator part e.g. SB and TB.
+                              string basePartToSearch = "";
+                              string companyToSearch = Session.CompanyID;
+                              
+                               if (OrderDtl_iterator.ShortChar02 != null &amp;&amp; OrderDtl_iterator.ShortChar02 != string.Empty)
+                              {
+                                  basePartToSearch = OrderDtl_iterator.ShortChar02;
+                              }
+                              else
+                              {
+                                  basePartToSearch = OrderDtl_iterator.PartNum;
+                                
+                              }                            
+                    //         this.PublishInfoMessage(basePartToSearch, Ice.Common.BusinessObjectMessageType.Information, Ice.Bpm.InfoMessageDisplayMode.Individual, "UserCodes","GetRows");
+                              
+                              var basePart = (from Part_Row in Db.Part
+                                      where Part_Row.Company == companyToSearch &amp;&amp;
+                                                      string.Compare(Part_Row.PartNum,  basePartToSearch, true) == 0
+                                                      select Part_Row).FirstOrDefault();
+                              if (basePart != null)
+                                {
+                                      processingDetails = processingDetails + "Found Base Part..." + basePart.PartNum + Environment.NewLine;
+  
+                                      // Need to get part plant and primary warehouse information
+                                      var originalPartPlant = (from PartPlant_Row in Db.PartPlant
+                                                              where PartPlant_Row.Company == Session.CompanyID &amp;&amp;
+                                                                    PartPlant_Row.Plant == vPlant &amp;&amp;
+                                                                    PartPlant_Row.PartNum == basePartToSearch
+                                                              select PartPlant_Row).FirstOrDefault();
+      
+                                          if (originalPartPlant != null)
+                                          {
+                                                 processingDetails = processingDetails + "Found base Part Plant..." + originalPartPlant.Plant + Environment.NewLine;
+  
+                                                  vPersonID = originalPartPlant.PersonID;
+                                                  vPrimWarehouse = originalPartPlant.PrimWhse;        
+                                                  //  Get Primary Bin   
+                                                  var originalPlantWhse = (from PlantWhse_Row in Db.PlantWhse
+                                                              where PlantWhse_Row.Company == Session.CompanyID &amp;&amp;
+                                                                                                  PlantWhse_Row.Plant == vPlant &amp;&amp;
+                                                                                                  PlantWhse_Row.PartNum == basePartToSearch &amp;&amp;
+                                                                                                  PlantWhse_Row.WarehouseCode == vPrimWarehouse
+                                                              select PlantWhse_Row).FirstOrDefault();
+                                                  if (originalPlantWhse != null)
+                                                  {
+                                                          processingDetails = processingDetails + "Found base Plant Warehouse..." + originalPlantWhse.WarehouseCode + Environment.NewLine;
+  
+                                                          vPrimBin = originalPlantWhse.PrimBin;
+                                                           processingDetails = processingDetails + "vPrimBin..." + vPrimBin + Environment.NewLine;
+                                                  }
+                                          } //originalPartPlant
+                                          
+
+                                          
+ 
+                                      // We have our original part information copied from the configurator base part, update the newly created part.
+                                      var newPart = (from partRow in Db.Part
+                                                      where partRow.Company == Session.CompanyID &amp;&amp;
+                                                            partRow.PartNum == OrderDtl_iterator.PartNum  
+                                                            &amp;&amp; partRow.PartNum != "FBMFG" // TD-24-11-2001
+                                                            select partRow).FirstOrDefault();
+                                      if (newPart != null)
+                                          {
+                                          
+                                              processingDetails = processingDetails + "Found New part..." + newPart.PartNum + " Prod Code: " + newPart.ProdCode + Environment.NewLine;
+                                              processingDetails = processingDetails + "Original Part Information:" + basePart.PartNum + " Prod Code: " + basePart.ProdCode + Environment.NewLine;
+  
+                                          
+                                              newPart.ShortChar01 = (string)basePart.ShortChar01;
+                                              newPart.ShortChar02 = (string)basePart.ShortChar02;
+                                              newPart.ShortChar03 = (string)basePart.ShortChar03;
+                                              newPart.ShortChar04 = (string)basePart.ShortChar04;
+                                              newPart.ShortChar05 = (string)basePart.ShortChar05;
+                                              newPart.ShortChar06 = (string)basePart.ShortChar06;
+                                              newPart.ShortChar07 = (string)basePart.ShortChar07;
+                                              //newPart.ShortChar08 = (string)basePart.ShortChar08;
+                                              newPart.ShortChar09 = (string)basePart.ShortChar09;
+                                              newPart.ShortChar10 = (string)basePart.ShortChar10;
+                                              newPart.ShortChar11 = (string)basePart.ShortChar11;
+                                              newPart.Number04 = (decimal)OrderDtl_iterator.Number09;
+                                              newPart.Number05 = (decimal)OrderDtl_iterator.Number01;
+                                              newPart.Number06 = (decimal)OrderDtl_iterator.Number02;
+                                              newPart.Number07 = (decimal)OrderDtl_iterator.Number03;
+                                              newPart.Number08 = (decimal)OrderDtl_iterator.Number17;
+                                              newPart.Number11 = (decimal)OrderDtl_iterator.Number21;
+                                              newPart.Number12 = (decimal)OrderDtl_iterator.Number26;
+                                              newPart.NetWeight = (decimal)OrderDtl_iterator.Number19;
+                                              newPart.ShortChar08 = (string)OrderDtl_iterator.ShortChar02;
+                                              newPart.InternalUnitPrice = (decimal)OrderDtl_iterator.Number13;
+                                              //newPart.Date01 = (DateTime?)OrderDtl_iterator.Date01;
+                                              newPart.PartDescription = (string)OrderDtl_iterator.LineDesc;
+                                              newPart.ProdCode = basePart.ProdCode;
+                                              newPart.ClassID = basePart.ClassID;
+                                              newPart.ISOrigCountry = basePart.ISOrigCountry;
+                                              newPart.Character09 = (string)OrderDtl_iterator.ShortChar08;
+                                              newPart.CostMethod = "S";
+                                             // if (newPart.Company == "GLB")
+                                             // {
+                                                if (firstTimePart)
+                                                {
+                                                  processingDetails = processingDetails + "Checkbox18 is true, this is a first time part, we are setting the type to Purchased" + Environment.NewLine;
+                                                  newPart.TypeCode = "P";
+                                                  newPart.ISOrigCountry = "42";
+                                                }
+                                                else
+                                                {
+                                                  processingDetails = processingDetails + "Checkbox18 is false, this is NOT a first time part, we are setting the type to Manufactured" + Environment.NewLine;
+                                                  newPart.TypeCode = "M";
+                                                }
+                                             // }
+                                              
+                                              Db.SaveChanges();
+                                              processingDetails = processingDetails + "Saved Changes on New Part ..." + newPart.PartNum + Environment.NewLine;
+  
+                                              // Uncomment for Debugging
+                                              //System.IO.File.AppendAllText (path + fileName, processingDetails);
+  
+                                              var partPlant = (from PartPlant_Row in Db.PartPlant
+                                                          where PartPlant_Row.Company == Session.CompanyID &amp;&amp;
+                                                                PartPlant_Row.Plant == vPlant &amp;&amp;
+                                                                PartPlant_Row.PartNum == newPart.PartNum
+                                                          select PartPlant_Row).FirstOrDefault();
+  
+                                              processingDetails = processingDetails + "Found New partPlant..." + partPlant.PartNum + " Plant: " + partPlant.Plant + Environment.NewLine;
+                                             
+                                              
+                                              if (partPlant != null)
+                                                  {
+                                                         //Update PartPlant fields - LLK
+                                                         partPlant.CostMethod = "S";
+                                                         partPlant.MfgLotSize = 1M;
+       
+                                                          if (firstTimePart)
+                                                          {
+                                                              processingDetails = processingDetails + "Checkbox18 is true, this is a first time part, we are setting the PLANT type to Purchased" + Environment.NewLine;
+                                                              partPlant.SourceType = "P";
+                                                              partPlant.BuyerID = "GLBBuyer";
+                                                              partPlant.BuyToOrder = true;
+                                                              partPlant.DropShip = true;
+                                                         
+                                                              int vendorNumToSearch = 0;
+                                                              if (partPlant.Plant == "SUW")
+                                                              {
+                                                              
+                                                                  vendorNumToSearch =  4827;
+                                                              }
+                                                                else if (partPlant.Plant == "GLB")
+                                                              {
+                                                                  vendorNumToSearch = 1;
+                                                              }
+                                                              
+                                                              var vendorLookup = (from x in Db.Vendor
+                                                                            where x.Company == partPlant.Company &amp;&amp;
+                                                                                  x.VendorNum == vendorNumToSearch
+                                                                            select x).FirstOrDefault();
+                                                                            
+                                                              if (vendorLookup != null)
+                                                              {
+                                                              
+                                                                    processingDetails = processingDetails + "Found vendor and updating to: " + vendorNumToSearch.ToString() + Environment.NewLine;
+                                                                    partPlant.VendorNum = vendorNumToSearch;
+                                                                    partPlant.PurPoint = vendorLookup.PurPoint;
+                                                                    
+                                                              }//partPlant.MfgLotSize = 123;
+                                                          }
+                                                          else
+                                                          {
+                                                              processingDetails = processingDetails + "Checkbox18 is false, this is NOT a first time part, we are setting the PLANT type to Manufactured" + Environment.NewLine;
+                                                              partPlant.SourceType = "M";
+                                                          }
+                                                              Db.SaveChanges();
+                                                         processingDetails = processingDetails + "Just saved partPlant.CostMethod ..." + partPlant.CostMethod + Environment.NewLine;
+                                                         processingDetails = processingDetails + "Just saved partPlant.BuyerID ..." + partPlant.BuyerID + Environment.NewLine;
+                                                    
+                                                         //We don't think that we need Primary Bin
+                                                         // Get Primary Bin 
+                              //                         var plantWhse = (from PlantWhse_Row in Db.PlantWhse
+                              //                                      where PlantWhse_Row.Company == Session.CompanyID &amp;&amp;
+                              //                                            PlantWhse_Row.Plant == vPlant &amp;&amp;
+                              //                                            PlantWhse_Row.PartNum ==newPart.PartNum &amp;&amp;
+                              //                                            PlantWhse_Row.WarehouseCode == vPrimWarehouse
+                              //                                       select PlantWhse_Row).FirstOrDefault();
+                              //                        if (plantWhse != null)
+                              //                            {
+                              //                                plantWhse.PrimBin = vPrimBin;
+                              //                                Db.SaveChanges();
+                              //                                
+                              //                                processingDetails = processingDetails + "Just saved plantWhse.PrimBin ..." + plantWhse.PrimBin + Environment.NewLine;
+                              //                            } //plantwhse
+                                                  } //partplant
+                                                  
+                                                
+                                                // Set up the PartCost for the new part
+                                                
+                                                  
+      
+                                          var newPartCost = (from PartCost_Row in Db.PartCost
+                                                              where PartCost_Row.Company == Session.CompanyID &amp;&amp;
+                                                                    PartCost_Row.PartNum == newPart.PartNum &amp;&amp;
+                                                                    PartCost_Row.StdMaterialCost == 0 &amp;&amp;
+                                                                    PartCost_Row.StdLaborCost == 0 &amp;&amp;
+                                                                    PartCost_Row.StdBurdenCost == 0
+                                                              select PartCost_Row).FirstOrDefault();
+  
+                                              if (newPartCost != null)
+                                                  {
+                                                 processingDetails = processingDetails + "OrderDtl.RowMod = " + OrderDtl_iterator.RowMod + Environment.NewLine;       
+                                                 processingDetails = processingDetails + "Updating Part Cost..." + newPartCost.PartNum + "OrderDtl.Number11 = " + OrderDtl_iterator.Number11 + Environment.NewLine;
+  
+                                                newPartCost.StdMaterialCost = (decimal)OrderDtl_iterator.Number11;
+                                                newPartCost.StdLaborCost = (decimal)OrderDtl_iterator.Number21;
+                                                newPartCost.StdBurdenCost = (decimal)OrderDtl_iterator.Number26;
+                                                Db.SaveChanges();
+                                                     processingDetails = processingDetails + "Just saved newPartCost ..." + newPartCost.PartNum + " Std Cost: " + newPartCost.StdMaterialCost + Environment.NewLine;     
+  
+                                                   } //originalPartCost                                             
+                                                  
+
+
+              
+
+                                                //Last item - create a Suppplier Price for this vendor/part.  We need to add a new VenPart record
+                                                // Need to deterimine how we know what vendor we're adding this to - for now using 4827 as the vendorNum
+                                                  int vendorNum = 1;
+                                                  
+                                                   if (Session.CompanyID == "HA")
+                                                   {
+                                                   vendorNum = 4827;
+                                                   }
+                                                   else
+                                                    if (Session.CompanyID == "GLB")
+                                                   {
+                                                   vendorNum = 1;
+                                                   }
+
+                                                    var vendorPartRecord = (from x in Db.VendPart
+                                                                            where x.Company == Session.CompanyID &amp;&amp;
+                                                                                  x.VendorNum == vendorNum &amp;&amp;
+                                                                                  x.PartNum == newPart.PartNum
+                                                                                  select x).FirstOrDefault();                                                                                  
+
+                                                  if (vendorPartRecord == null &amp;&amp; firstTimePart)
+                                                   {
+                                                      processingDetails = processingDetails + "Checkbox18 is true, this is a first time part, we are setting creating the vendor part information..." + Environment.NewLine;
+                                                      var vendPartSvc = ServiceRenderer.GetService&lt;Erp.Contracts.VendPartSvcContract&gt;(Db);
+                                                      Erp.Tablesets.VendPartTableset vendPartTableset = new Erp.Tablesets.VendPartTableset();
+                                    
+                                                      vendPartSvc.GetNewVendPart(ref vendPartTableset,"", "", "", vendorNum);
+                                                      bool multipleMatch = false;
+                                                      string uomCode = String.Empty;
+                                                      string questionString = String.Empty;
+                                                      string serialWarning = String.Empty;
+                                                      string partNumToAdd = newPart.PartNum;
+                                                      
+                                                      vendPartSvc.ChangePart(ref partNumToAdd, vendPartTableset.VendPart[0].SysRowID, "", ref uomCode, out serialWarning, out questionString, out multipleMatch, ref vendPartTableset);    
+                                                      vendPartSvc.ChangeVendPartPUM(ref vendPartTableset, newPart.PUM);
+                                                      vendPartSvc.Update(ref vendPartTableset);
+                                                      vendPartTableset.VendPart[0].BaseUnitPrice = (decimal)OrderDtl_iterator.Number23;
+                                                      vendPartTableset.VendPart[0].MinimumPrice = (decimal)OrderDtl_iterator.Number23;
+                                                      vendPartTableset.VendPart[0].PrimaryVendor = true;
+                                                      vendPartTableset.VendPart[0].RowMod = "U";
+                                                      
+                                                      vendPartSvc.Update(ref vendPartTableset);
+                                                   }                                                   
+                                                   
+                                                   
+                                                   
+                                                   
+                                                  //newVendPart.PartNum = newPart.PartNum;
+                                                  //newVendPart.MinimumPrice = (decimal)OrderDtl_iterator.Number23;
+                                                  //newVendPart.BaseUnitPrice = (decimal)OrderDtl_iterator.Number23;
+                                                  
+                                                  
+                                                  
+                                                  
+                                                   // Uncomment for Debugging
+                                              //System.IO.File.AppendAllText (path + fileName, processingDetails);                                             
+                                                  
+                                          } //newpart
+                                }    
+                                
+
+            processingDetails = processingDetails + "Checkbox19 set to true - next step is to update orderdtl..." + Environment.NewLine;
+   
+        }
+  
+             System.IO.File.AppendAllText (path + fileName, processingDetails); 
+
+}
+catch (Exception e)
+{
+    string exceptionMessage = "OrderDtl.SmartPart - Exception Occurred while Copying UD Fields to new part: " + processingDetails + Environment.NewLine + "Exception: " + e.Message;
+    System.IO.File.AppendAllText (path + fileName, processingDetails + exceptionMessage);
+ 
+ 
+ this.PublishInfoMessage(exceptionMessage, Ice.Common.BusinessObjectMessageType.Information, Ice.Bpm.InfoMessageDisplayMode.Individual, "UserCodes","GetRows");
+         
+}" ExecutionRule="OnceForAllMatching" Id="0" IsAsync="False" RecordMode="Nothing" TerminateOnError="False" ValidationState="Valid" /&gt;&lt;/DirectiveStep.Action&gt;&lt;DirectiveStep.VisualProperties&gt;&lt;p:VisualPropertiesStorage&gt;&lt;x:Double x:Key="ElementX"&gt;351&lt;/x:Double&gt;&lt;x:Double x:Key="ElementY"&gt;163&lt;/x:Double&gt;&lt;iubd:TextNote Text="{x:Null}" x:Key="Note" Background="Yellow" IsExpanded="False" IsNotifying="True" X="0" Y="0" /&gt;&lt;/p:VisualPropertiesStorage&gt;&lt;/DirectiveStep.VisualProperties&gt;&lt;/DirectiveStep&gt;&lt;/DirectiveCondition.True&gt;&lt;DirectiveCondition.VisualProperties&gt;&lt;p:VisualPropertiesStorage&gt;&lt;x:Double x:Key="ElementX"&gt;615&lt;/x:Double&gt;&lt;x:Double x:Key="ElementY"&gt;159&lt;/x:Double&gt;&lt;iubd:TextNote Text="{x:Null}" x:Key="Note" Background="Yellow" IsExpanded="False" IsNotifying="True" X="0" Y="0" /&gt;&lt;iubd:LinkProperties x:Key="TrueExitLink" DestinationConnectorId="10" SourceConnectorId="7"&gt;&lt;iubd:LinkProperties.Points&gt;&lt;cm:BindableCollection x:TypeArguments="av:Point" IsNotifying="True"&gt;&lt;av:Point&gt;615,204&lt;/av:Point&gt;&lt;av:Point&gt;471,208&lt;/av:Point&gt;&lt;/cm:BindableCollection&gt;&lt;/iubd:LinkProperties.Points&gt;&lt;/iubd:LinkProperties&gt;&lt;/p:VisualPropertiesStorage&gt;&lt;/DirectiveCondition.VisualProperties&gt;&lt;/DirectiveCondition&gt;&lt;/DirectiveDefinition.StartNode&gt;&lt;DirectiveDefinition.Variables&gt;&lt;scg:List x:TypeArguments="DirectiveVariable" Capacity="0" /&gt;&lt;/DirectiveDefinition.Variables&gt;&lt;DirectiveDefinition.VisualProperties&gt;&lt;p:VisualPropertiesStorage&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Widgets.BAMAutoPrintViewModelInstanceCounter"&gt;0&lt;/x:Int32&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Widgets.CallScWorkflowViewModelInstanceCounter"&gt;0&lt;/x:Int32&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Widgets.CustomCodeActionViewModelInstanceCounter"&gt;1&lt;/x:Int32&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Widgets.AttachDataTagViewModelInstanceCounter"&gt;0&lt;/x:Int32&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Widgets.RemoveDataTagViewModelInstanceCounter"&gt;0&lt;/x:Int32&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Widgets.ConditionViewModelInstanceCounter"&gt;2&lt;/x:Int32&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Widgets.InvokeBOMethodViewModelInstanceCounter"&gt;0&lt;/x:Int32&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Widgets.InvokeEpicorFunctionViewModelInstanceCounter"&gt;0&lt;/x:Int32&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Widgets.InvokeNetMethodViewModelInstanceCounter"&gt;0&lt;/x:Int32&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Widgets.NotificationViewModelInstanceCounter"&gt;0&lt;/x:Int32&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Widgets.FillTableByQueryViewModelInstanceCounter"&gt;0&lt;/x:Int32&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Widgets.UpdateTableByQueryViewModelInstanceCounter"&gt;0&lt;/x:Int32&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Widgets.SendMailViewModelInstanceCounter"&gt;0&lt;/x:Int32&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Widgets.SetArgumentViewModelInstanceCounter"&gt;0&lt;/x:Int32&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Widgets.SetBpmDataFieldViewModelInstanceCounter"&gt;0&lt;/x:Int32&gt;&lt;x:Double x:Key="ElementX"&gt;605&lt;/x:Double&gt;&lt;x:Double x:Key="ElementY"&gt;27&lt;/x:Double&gt;&lt;iubd:TextNote Text="{x:Null}" x:Key="Note" Background="Yellow" IsExpanded="False" IsNotifying="True" X="0" Y="0" /&gt;&lt;iubd:LinkProperties x:Key="ExitLink" DestinationConnectorId="1" SourceConnectorId="4"&gt;&lt;iubd:LinkProperties.Points&gt;&lt;cm:BindableCollection x:TypeArguments="av:Point" IsNotifying="True"&gt;&lt;av:Point&gt;665,117&lt;/av:Point&gt;&lt;av:Point&gt;675,159&lt;/av:Point&gt;&lt;/cm:BindableCollection&gt;&lt;/iubd:LinkProperties.Points&gt;&lt;/iubd:LinkProperties&gt;&lt;/p:VisualPropertiesStorage&gt;&lt;/DirectiveDefinition.VisualProperties&gt;&lt;/DirectiveDefinition&gt;</Body>
+      <SysRevID>System.Byte[]</SysRevID>
+      <SysRowID>c28067ad-3651-4046-b9c1-cb21bcc6ef59</SysRowID>
+    </Details>
+  </BPM_details>
+</File>
