@@ -14,7 +14,7 @@
       <DirectiveGroup>DropShip - TrackingNumber DD</DirectiveGroup>
       <IsUpToDate>True</IsUpToDate>
       <CGCCode />
-      <Body>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;DirectiveDefinition mc:Ignorable="p" AdditionalUsings="{x:Null}" Version="116" xmlns="clr-namespace:Ice.Lib.Bpm.Model;assembly=Ice.Lib.Bpm.Shared" xmlns:av="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:cm="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro" xmlns:icbb="clr-namespace:Ice.Contracts.BO.BpMethod;assembly=Ice.Contracts.BO.BpMethod" xmlns:ilbma="clr-namespace:Ice.Lib.Bpm.Model.Actions;assembly=Ice.Lib.Bpm.Shared" xmlns:iubd="clr-namespace:Ice.UI.Bpm.Designer;assembly=Ice.UI.Bpm.Designer" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:p="http://epicor.com/BpmDesigner/Ignorable" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=mscorlib" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"&gt;&lt;DirectiveDefinition.AdditionalReferences&gt;&lt;scg:List x:TypeArguments="icbb:ReferencesGroup" Capacity="0" /&gt;&lt;/DirectiveDefinition.AdditionalReferences&gt;&lt;DirectiveDefinition.Nodes&gt;&lt;x:Reference&gt;__ReferenceID0&lt;/x:Reference&gt;&lt;/DirectiveDefinition.Nodes&gt;&lt;DirectiveDefinition.StartNode&gt;&lt;DirectiveStep Next="{x:Null}" x:Name="__ReferenceID0" DisplayName="Execute Custom Code 0" Id="e4458ba2-f7ec-4597-8eca-4788104af104"&gt;&lt;DirectiveStep.Action&gt;&lt;ilbma:CustomCodeAction PrimaryTable="{x:Null}" Code="var v = ttDropShipHead.Where(x=&gt; x.RowMod == &amp;quot;U&amp;quot;).FirstOrDefault();
+      <Body>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;DirectiveDefinition mc:Ignorable="p" AdditionalUsings="{x:Null}" Version="116" xmlns="clr-namespace:Ice.Lib.Bpm.Model;assembly=Ice.Lib.Bpm.Shared" xmlns:av="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:cm="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro" xmlns:icbb="clr-namespace:Ice.Contracts.BO.BpMethod;assembly=Ice.Contracts.BO.BpMethod" xmlns:ilbma="clr-namespace:Ice.Lib.Bpm.Model.Actions;assembly=Ice.Lib.Bpm.Shared" xmlns:iubd="clr-namespace:Ice.UI.Bpm.Designer;assembly=Ice.UI.Bpm.Designer" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:p="http://epicor.com/BpmDesigner/Ignorable" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=mscorlib" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"&gt;&lt;DirectiveDefinition.AdditionalReferences&gt;&lt;scg:List x:TypeArguments="icbb:ReferencesGroup" Capacity="0" /&gt;&lt;/DirectiveDefinition.AdditionalReferences&gt;&lt;DirectiveDefinition.Nodes&gt;&lt;x:Reference&gt;__ReferenceID0&lt;/x:Reference&gt;&lt;/DirectiveDefinition.Nodes&gt;&lt;DirectiveDefinition.StartNode&gt;&lt;DirectiveStep Next="{x:Null}" x:Name="__ReferenceID0" DisplayName="Execute Custom Code 0" Id="e4458ba2-f7ec-4597-8eca-4788104af104"&gt;&lt;DirectiveStep.Action&gt;&lt;ilbma:CustomCodeAction PrimaryTable="{x:Null}" Code="var v = ttDropShipHead.Where(x=&gt; x.RowMod == "U").FirstOrDefault();
 if( v!= null)
 {
   var vend = Db.Vendor.Where( c=&gt; c.Company == v.Company &amp;&amp; c.VendorNum == v.VendorNum).FirstOrDefault();
@@ -28,11 +28,11 @@ if( v!= null)
       VendNum = vp.VendorNum;
     }
     
-    if( v.PackSlip != &amp;quot;&amp;quot; || v.PackSlip != &amp;quot;0&amp;quot; ) /* Check packslip is empty */
+    if( v.PackSlip != "" || v.PackSlip != "0" ) /* Check packslip is empty */
     {
       
       bool isInt = Int32.TryParse(v.PackSlip, out PackNum);
-      //Convert.ToInt32(v.PackSlip); 12
+      //Convert.ToInt32(v.PackSlip); 
       var cship = Db.ShipHead.Where(y=&gt; y.Company ==  vend.VendorID &amp;&amp; y.PackNum == PackNum).FirstOrDefault();
       if( cship != null)
       {
