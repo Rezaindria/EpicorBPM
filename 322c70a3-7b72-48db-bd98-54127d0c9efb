@@ -6,7 +6,7 @@
       <BpMethodCode>Erp.JobMtl.Update</BpMethodCode>
       <Name>SetContract</Name>
       <Order>20</Order>
-      <IsEnabled>True</IsEnabled>
+      <IsEnabled>False</IsEnabled>
       <ReenterMax>1000</ReenterMax>
       <PreventDeadloops>False</PreventDeadloops>
       <VisibilityScope>1</VisibilityScope>
