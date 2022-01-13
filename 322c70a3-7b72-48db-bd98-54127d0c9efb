@@ -1,0 +1,47 @@
+<File>
+  <BPM_details>
+    <Details>
+      <DirectiveID>322c70a3-7b72-48db-bd98-54127d0c9efb</DirectiveID>
+      <Source>DB</Source>
+      <BpMethodCode>Erp.JobMtl.Update</BpMethodCode>
+      <Name>SetContract</Name>
+      <Order>20</Order>
+      <IsEnabled>False</IsEnabled>
+      <ReenterMax>1000</ReenterMax>
+      <PreventDeadloops>False</PreventDeadloops>
+      <VisibilityScope>1</VisibilityScope>
+      <Company>HA</Company>
+      <DirectiveGroup>Contracts</DirectiveGroup>
+      <IsUpToDate>True</IsUpToDate>
+      <CGCCode></CGCCode>
+      <Body>&lt;DirectiveDefinition xmlns="clr-namespace:Ice.Lib.Bpm.Model;assembly=Ice.Lib.Bpm.Shared" xmlns:av="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:cm="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro" xmlns:icbb="clr-namespace:Ice.Contracts.BO.BpMethod;assembly=Ice.Contracts.BO.BpMethod" xmlns:ilbma="clr-namespace:Ice.Lib.Bpm.Model.Actions;assembly=Ice.Lib.Bpm.Shared" xmlns:iubd="clr-namespace:Ice.UI.Bpm.Designer;assembly=Ice.UI.Bpm.Core" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:p="http://epicor.com/BpmDesigner/Ignorable" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=mscorlib" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" mc:Ignorable="p" StartNode="{x:Reference __ReferenceID0}" AdditionalUsings="" Version="116"&gt;&lt;DirectiveDefinition.AdditionalReferences&gt;&lt;scg:List x:TypeArguments="icbb:ReferencesGroup" Capacity="4"&gt;&lt;icbb:ReferencesGroup IsEditable="True" IsStandard="False" Name="Assemblies"&gt;&lt;icbb:ReferencesGroup.References&gt;&lt;scg:Dictionary x:TypeArguments="x:String, icbb:ReferenceInfo" /&gt;&lt;/icbb:ReferencesGroup.References&gt;&lt;/icbb:ReferencesGroup&gt;&lt;icbb:ReferencesGroup IsEditable="True" IsStandard="False" Name="Externals"&gt;&lt;icbb:ReferencesGroup.References&gt;&lt;scg:Dictionary x:TypeArguments="x:String, icbb:ReferenceInfo" /&gt;&lt;/icbb:ReferencesGroup.References&gt;&lt;/icbb:ReferencesGroup&gt;&lt;icbb:ReferencesGroup IsEditable="True" IsStandard="True" Name="Standard"&gt;&lt;icbb:ReferencesGroup.References&gt;&lt;scg:Dictionary x:TypeArguments="x:String, icbb:ReferenceInfo" /&gt;&lt;/icbb:ReferencesGroup.References&gt;&lt;/icbb:ReferencesGroup&gt;&lt;/scg:List&gt;&lt;/DirectiveDefinition.AdditionalReferences&gt;&lt;DirectiveDefinition.Nodes&gt;&lt;DirectiveStep Next="{x:Null}" x:Name="__ReferenceID0" DisplayName="Execute Custom Code 0" Id="47b68e5b-ed24-43c8-9dfe-3ada6043d78c"&gt;&lt;DirectiveStep.Action&gt;&lt;ilbma:CustomCodeAction PrimaryTable="{x:Null}" Code="
+Erp.Tables.JobHead JobHead = null;
+
+
+foreach (var ttJobMtl_iterator in (from ttJobMtl_Row in ttJobMtl select ttJobMtl_Row))
+{
+
+	var ttJobMtlRow = ttJobMtl_iterator;
+
+	JobHead = (from JobHead_Row in Db.JobHead 
+																where JobHead_Row.Company == Session.CompanyID &amp;&amp;
+																JobHead_Row.JobNum == ttJobMtlRow.JobNum
+																select JobHead_Row).FirstOrDefault();
+
+	if (JobHead != null)
+	{
+
+		if (JobHead.ContractID != "")
+		{
+			ttJobMtlRow.ContractID = JobHead.ContractID;
+			ttJobMtlRow.LinkToContract = true;
+		}
+	}
+}
+															
+" ExecutionRule="OnceForAllMatching" Id="0" IsAsync="False" RecordMode="Nothing" TerminateOnError="False" ValidationState="Valid" /&gt;&lt;/DirectiveStep.Action&gt;&lt;DirectiveStep.VisualProperties&gt;&lt;p:VisualPropertiesStorage&gt;&lt;x:Double x:Key="ElementX"&gt;76&lt;/x:Double&gt;&lt;x:Double x:Key="ElementY"&gt;158.04&lt;/x:Double&gt;&lt;iubd:TextNote Text="{x:Null}" x:Key="Note" Background="Yellow" IsExpanded="False" X="0" Y="0" /&gt;&lt;/p:VisualPropertiesStorage&gt;&lt;/DirectiveStep.VisualProperties&gt;&lt;/DirectiveStep&gt;&lt;/DirectiveDefinition.Nodes&gt;&lt;DirectiveDefinition.Variables&gt;&lt;scg:List x:TypeArguments="DirectiveVariable" Capacity="0" /&gt;&lt;/DirectiveDefinition.Variables&gt;&lt;DirectiveDefinition.VisualProperties&gt;&lt;p:VisualPropertiesStorage&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Designer.Plugins.EnablePostTranDirectiveViewModelInstanceCounter"&gt;0&lt;/x:Int32&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Designer.Plugins.BAMChangeLogViewModelInstanceCounter"&gt;0&lt;/x:Int32&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Designer.Plugins.AttachDataTagViewModelInstanceCounter"&gt;0&lt;/x:Int32&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Designer.Plugins.ConditionViewModelInstanceCounter"&gt;0&lt;/x:Int32&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Designer.Plugins.CustomCodeActionViewModelInstanceCounter"&gt;1&lt;/x:Int32&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Designer.Plugins.InvokeNetMethodViewModelInstanceCounter"&gt;0&lt;/x:Int32&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Designer.Plugins.RaiseExceptionViewModelInstanceCounter"&gt;0&lt;/x:Int32&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Designer.Plugins.RemoveDataTagViewModelInstanceCounter"&gt;0&lt;/x:Int32&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Designer.Plugins.SetArgumentViewModelInstanceCounter"&gt;0&lt;/x:Int32&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Designer.Plugins.SetBpmDataFieldViewModelInstanceCounter"&gt;0&lt;/x:Int32&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Designer.Plugins.SetByQueryViewModelInstanceCounter"&gt;0&lt;/x:Int32&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Designer.Plugins.SetFieldViewModelInstanceCounter"&gt;0&lt;/x:Int32&gt;&lt;x:Int32 x:Key="Ice.UI.Bpm.Designer.Plugins.ShowMessageViewModelInstanceCounter"&gt;0&lt;/x:Int32&gt;&lt;x:Double x:Key="ElementX"&gt;10&lt;/x:Double&gt;&lt;x:Double x:Key="ElementY"&gt;10&lt;/x:Double&gt;&lt;iubd:TextNote Text="{x:Null}" x:Key="Note" Background="Yellow" IsExpanded="False" X="0" Y="0" /&gt;&lt;iubd:LinkProperties x:Key="ExitLink" DestinationConnectorId="1" SourceConnectorId="10"&gt;&lt;iubd:LinkProperties.Points&gt;&lt;cm:BindableCollection x:TypeArguments="av:Point" IsNotifying="True"&gt;&lt;av:Point&gt;130,55&lt;/av:Point&gt;&lt;av:Point&gt;136,158.04&lt;/av:Point&gt;&lt;/cm:BindableCollection&gt;&lt;/iubd:LinkProperties.Points&gt;&lt;/iubd:LinkProperties&gt;&lt;/p:VisualPropertiesStorage&gt;&lt;/DirectiveDefinition.VisualProperties&gt;&lt;/DirectiveDefinition&gt;</Body>
+      <SysRevID>System.Byte[]</SysRevID>
+      <SysRowID>5fabdaa2-93a8-4234-8c1c-e4ecded32174</SysRowID>
+    </Details>
+  </BPM_details>
+</File>
