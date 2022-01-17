@@ -14,7 +14,98 @@
       <DirectiveGroup>Labor - Send Notification for CPC</DirectiveGroup>
       <IsUpToDate>True</IsUpToDate>
       <CGCCode />
-      <Body><![CDATA[<?xml version="1.0" encoding="utf-16"?><DirectiveDefinition mc:Ignorable="p" AdditionalUsings="{x:Null}" StartNode="{x:Null}" Version="116" xmlns="clr-namespace:Ice.Lib.Bpm.Model;assembly=Ice.Lib.Bpm.Shared" xmlns:icbb="clr-namespace:Ice.Contracts.BO.BpMethod;assembly=Ice.Contracts.BO.BpMethod" xmlns:ilbma="clr-namespace:Ice.Lib.Bpm.Model.Actions;assembly=Ice.Lib.Bpm.Shared" xmlns:ilbmc="clr-namespace:Ice.Lib.Bpm.Model.Conditions;assembly=Ice.Lib.Bpm.Shared" xmlns:iubd="clr-namespace:Ice.UI.Bpm.Designer;assembly=Ice.UI.Bpm.Designer" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:p="http://epicor.com/BpmDesigner/Ignorable" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=mscorlib" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"><DirectiveDefinition.AdditionalReferences><scg:List x:TypeArguments="icbb:ReferencesGroup" Capacity="0" /></DirectiveDefinition.AdditionalReferences><DirectiveDefinition.Nodes><DirectiveStep Next="{x:Null}" DisplayName="Execute Custom Code 0" Id="c087beca-ac0e-4bee-abe8-c8342374a9be"><DirectiveStep.Action><ilbma:CustomCodeAction PrimaryTable="{x:Null}" Code="" ExecutionRule="OnceForAllMatching" Id="0" IsAsync="False" RecordMode="Nothing" TerminateOnError="False" ValidationState="NotConfigured" /></DirectiveStep.Action><DirectiveStep.VisualProperties><p:VisualPropertiesStorage><x:Double x:Key="ElementX">373</x:Double><x:Double x:Key="ElementY">142</x:Double><iubd:TextNote Text="{x:Null}" x:Key="Note" Background="Yellow" IsExpanded="False" IsNotifying="True" X="0" Y="0" /></p:VisualPropertiesStorage></DirectiveStep.VisualProperties></DirectiveStep><DirectiveCondition False="{x:Null}" True="{x:Null}" DisplayName="Condition 0" Id="f5f29883-1b80-4c70-9d3b-2ca180ef273a"><DirectiveCondition.Condition><ConditionBlock><ConditionBlock.Items><ConditionBlockItem Postfix="{x:Null}" Prefix="{x:Null}" Operator="None"><ConditionBlockItem.Condition><ilbmc:FieldCondition VisualProperties="{x:Null}" Filter="Changed" Id="0" Operator="NotEqualsTo" ValidationState="Valid"><ilbmc:FieldCondition.Expression><ExpressionDefinition Text=""D""><ExpressionDefinition.TableParameters><scg:List x:TypeArguments="TableParameter" Capacity="0" /></ExpressionDefinition.TableParameters></ExpressionDefinition></ilbmc:FieldCondition.Expression><ilbmc:FieldCondition.Field><ColumnInfo ColumnName="RowMod" DataType="System.String" IsExtensionTable="False" IsUd="False" TableName="ttLaborDtl" TableRowTypeName="Erp.Tablesets.LaborDtlRow" /></ilbmc:FieldCondition.Field></ilbmc:FieldCondition></ConditionBlockItem.Condition></ConditionBlockItem></ConditionBlock.Items></ConditionBlock></DirectiveCondition.Condition><DirectiveCondition.VisualProperties><p:VisualPropertiesStorage><x:Double x:Key="ElementX">557</x:Double><x:Double x:Key="ElementY">144</x:Double><iubd:TextNote Text="{x:Null}" x:Key="Note" Background="Yellow" IsExpanded="False" IsNotifying="True" X="0" Y="0" /></p:VisualPropertiesStorage></DirectiveCondition.VisualProperties></DirectiveCondition></DirectiveDefinition.Nodes><DirectiveDefinition.Variables><scg:List x:TypeArguments="DirectiveVariable" Capacity="0" /></DirectiveDefinition.Variables><DirectiveDefinition.VisualProperties><p:VisualPropertiesStorage><x:Int32 x:Key="Ice.UI.Bpm.Widgets.CallBpmDataFormViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.CallScWorkflowViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.CustomCodeActionViewModelInstanceCounter">1</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.AttachDataTagViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.RemoveDataTagViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.ConditionViewModelInstanceCounter">1</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.AttachHoldViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.RemoveHoldsViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.InvokeBOMethodViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.InvokeEpicorFunctionViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.InvokeNetMethodViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.NotificationViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.FillTableByQueryViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.UpdateTableByQueryViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.RaiseExceptionViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.SendMailViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.SetArgumentViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.SetBpmDataFieldViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.SetByQueryViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.SetFieldViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.ShowMessageViewModelInstanceCounter">0</x:Int32><x:Double x:Key="ElementX">556</x:Double><x:Double x:Key="ElementY">20</x:Double><iubd:TextNote Text="{x:Null}" x:Key="Note" Background="Yellow" IsExpanded="False" IsNotifying="True" X="0" Y="0" /></p:VisualPropertiesStorage></DirectiveDefinition.VisualProperties></DirectiveDefinition>]]></Body>
+      <Body><![CDATA[<?xml version="1.0" encoding="utf-16"?><DirectiveDefinition mc:Ignorable="p" AdditionalUsings="{x:Null}" StartNode="{x:Null}" Version="116" xmlns="clr-namespace:Ice.Lib.Bpm.Model;assembly=Ice.Lib.Bpm.Shared" xmlns:icbb="clr-namespace:Ice.Contracts.BO.BpMethod;assembly=Ice.Contracts.BO.BpMethod" xmlns:ilbma="clr-namespace:Ice.Lib.Bpm.Model.Actions;assembly=Ice.Lib.Bpm.Shared" xmlns:ilbmc="clr-namespace:Ice.Lib.Bpm.Model.Conditions;assembly=Ice.Lib.Bpm.Shared" xmlns:iubd="clr-namespace:Ice.UI.Bpm.Designer;assembly=Ice.UI.Bpm.Designer" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:p="http://epicor.com/BpmDesigner/Ignorable" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=mscorlib" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"><DirectiveDefinition.AdditionalReferences><scg:List x:TypeArguments="icbb:ReferencesGroup" Capacity="0" /></DirectiveDefinition.AdditionalReferences><DirectiveDefinition.Nodes><DirectiveStep Next="{x:Null}" DisplayName="Execute Custom Code 0" Id="c087beca-ac0e-4bee-abe8-c8342374a9be"><DirectiveStep.Action><ilbma:CustomCodeAction PrimaryTable="{x:Null}" Code="// Job has started - if Order ShipVia is CPC, then send an email notification to CCR   l. Knight 01-17-22
+
+string processingDetails = string.Empty;
+string path = @"\\hussv022\c$\Logs\";
+string fileName = "Labor - Send Notification for CPC" + Guid.NewGuid ().ToString () + ".txt";
+
+processingDetails = processingDetails + "Starting Labor - Send Notification for CP" + Environment.NewLine;
+
+Erp.Tables.JobHead JobHead;
+Erp.Tables.JobOper JobOper;
+//Ice.Diagnostics.Log.WriteEntry("IN IN IN");
+var ttLaborDtl_xRow = (from ttLaborDtl_Row in ttLaborDtl
+                       where ttLaborDtl_Row.Company == Session.CompanyID && 
+                      (string.Equals(ttLaborDtl_Row.RowMod, IceRow.ROWSTATE_UPDATED, StringComparison.OrdinalIgnoreCase) || 
+                       string.Equals(ttLaborDtl_Row.RowMod, IceRow.ROWSTATE_ADDED, StringComparison.OrdinalIgnoreCase))
+                       select ttLaborDtl_Row).FirstOrDefault();
+
+/*Get the current labour detail record*/
+if (ttLaborDtl_xRow != null)
+{
+
+  //Only run the code for "End Activity"
+  if (ttLaborDtl_xRow.EndActivity)
+    {
+  processingDetails = processingDetails + "ttLaborDtl.EndActivity.." + Environment.NewLine;
+
+    callContextBpmData["CheckBox02"] = false;        
+    bool checkIt = true;
+    bool hasLaterOps = false;
+    /* Check to see if it is for SUW */
+    JobHead = (from JobHead_Row in Db.JobHead
+               where JobHead_Row.Company == Session.CompanyID &&
+               string.Compare(JobHead_Row.JobNum, ttLaborDtl_xRow.JobNum, true) == 0
+               select JobHead_Row).FirstOrDefault();
+
+    if (JobHead != null)
+    {
+    
+    processingDetails = processingDetails + "JobHead.Plant = " + JobHead.Plant + Environment.NewLine;
+        if (string.Compare(JobHead.Plant, "SUW", true) != 0)
+        {
+            checkIt = false; 
+
+        }
+             processingDetails = processingDetails + "checkIt = " + checkIt  + Environment.NewLine;
+    }
+
+
+    JobOper = (from JobOper_Row in Db.JobOper
+               where JobOper_Row.Company == Session.CompanyID &&
+               string.Compare(JobOper_Row.JobNum, ttLaborDtl_xRow.JobNum, true) == 0 &&
+               JobOper_Row.OprSeq == ttLaborDtl_xRow.OprSeq
+               select JobOper_Row).FirstOrDefault();
+
+      //Only check material on OPCODE S0900 - Pulling
+    if (JobOper != null)
+    {
+            processingDetails = processingDetails + "JobOper.OprSeq = " + JobOper.OprSeq + Environment.NewLine;        
+            processingDetails = processingDetails + "ttLaborDtl_xRow.OprSeq = " + ttLaborDtl_xRow.OprSeq + Environment.NewLine;
+    
+        processingDetails = processingDetails + "JobOper.OpCode = " + JobOper.OpCode + Environment.NewLine;
+        
+        
+            if (JobOper.OpCode != "S0900")
+        {
+            checkIt = false; 
+
+        }
+                    processingDetails = processingDetails + "checkIt = " + checkIt  + Environment.NewLine;
+    }  //if JobOper
+    
+    /* We use checkIt to determine if we should do the check or not */
+                    processingDetails = processingDetails + "If checkIt = " + checkIt  + Environment.NewLine;
+    if (checkIt)
+    {
+//Ice.Diagnostics.Log.WriteEntry("In CheckIt");
+   // Compose email
+   
+   
+   
+   
+
+
+
+      } // checkit
+        } //LaborDtl.StartActivity
+        
+
+System.IO.File.AppendAllText (path + fileName, processingDetails); 
+
+} //ttlabordtl
+" ExecutionRule="OnceForAllMatching" Id="0" IsAsync="False" RecordMode="Nothing" TerminateOnError="False" ValidationState="Valid" /></DirectiveStep.Action><DirectiveStep.VisualProperties><p:VisualPropertiesStorage><x:Double x:Key="ElementX">373</x:Double><x:Double x:Key="ElementY">142</x:Double><iubd:TextNote Text="{x:Null}" x:Key="Note" Background="Yellow" IsExpanded="False" IsNotifying="True" X="0" Y="0" /></p:VisualPropertiesStorage></DirectiveStep.VisualProperties></DirectiveStep><DirectiveCondition False="{x:Null}" True="{x:Null}" DisplayName="Condition 0" Id="f5f29883-1b80-4c70-9d3b-2ca180ef273a"><DirectiveCondition.Condition><ConditionBlock><ConditionBlock.Items><ConditionBlockItem Postfix="{x:Null}" Prefix="{x:Null}" Operator="None"><ConditionBlockItem.Condition><ilbmc:FieldCondition VisualProperties="{x:Null}" Filter="Changed" Id="0" Operator="NotEqualsTo" ValidationState="Valid"><ilbmc:FieldCondition.Expression><ExpressionDefinition Text=""D""><ExpressionDefinition.TableParameters><scg:List x:TypeArguments="TableParameter" Capacity="0" /></ExpressionDefinition.TableParameters></ExpressionDefinition></ilbmc:FieldCondition.Expression><ilbmc:FieldCondition.Field><ColumnInfo ColumnName="RowMod" DataType="System.String" IsExtensionTable="False" IsUd="False" TableName="ttLaborDtl" TableRowTypeName="Erp.Tablesets.LaborDtlRow" /></ilbmc:FieldCondition.Field></ilbmc:FieldCondition></ConditionBlockItem.Condition></ConditionBlockItem></ConditionBlock.Items></ConditionBlock></DirectiveCondition.Condition><DirectiveCondition.VisualProperties><p:VisualPropertiesStorage><x:Double x:Key="ElementX">557</x:Double><x:Double x:Key="ElementY">144</x:Double><iubd:TextNote Text="{x:Null}" x:Key="Note" Background="Yellow" IsExpanded="False" IsNotifying="True" X="0" Y="0" /></p:VisualPropertiesStorage></DirectiveCondition.VisualProperties></DirectiveCondition></DirectiveDefinition.Nodes><DirectiveDefinition.Variables><scg:List x:TypeArguments="DirectiveVariable" Capacity="0" /></DirectiveDefinition.Variables><DirectiveDefinition.VisualProperties><p:VisualPropertiesStorage><x:Int32 x:Key="Ice.UI.Bpm.Widgets.CallBpmDataFormViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.CallScWorkflowViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.CustomCodeActionViewModelInstanceCounter">1</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.AttachDataTagViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.RemoveDataTagViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.ConditionViewModelInstanceCounter">1</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.AttachHoldViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.RemoveHoldsViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.InvokeBOMethodViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.InvokeEpicorFunctionViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.InvokeNetMethodViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.NotificationViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.FillTableByQueryViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.UpdateTableByQueryViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.RaiseExceptionViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.SendMailViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.SetArgumentViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.SetBpmDataFieldViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.SetByQueryViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.SetFieldViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.ShowMessageViewModelInstanceCounter">0</x:Int32><x:Double x:Key="ElementX">556</x:Double><x:Double x:Key="ElementY">20</x:Double><iubd:TextNote Text="{x:Null}" x:Key="Note" Background="Yellow" IsExpanded="False" IsNotifying="True" X="0" Y="0" /></p:VisualPropertiesStorage></DirectiveDefinition.VisualProperties></DirectiveDefinition>]]></Body>
       <SysRevID>System.Byte[]</SysRevID>
       <SysRowID>fb7de064-e463-4d88-a93d-8d9c09d9d24c</SysRowID>
     </Details>
