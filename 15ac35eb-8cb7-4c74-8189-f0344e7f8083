@@ -93,6 +93,299 @@ if (ttLaborDtl_xRow != null)
    // Compose email
    
    
+string bpmFrom = string.Empty;
+string bpmTo = string.Empty;
+string bpmCC = string.Empty;
+string bpmSubject = string.Empty;
+string bpmBody = string.Empty;
+string bpmReqDate = string.Empty;
+string vShipContact = string.Empty;
+string vShipToName = string.Empty;
+string vShipToCity = string.Empty;
+string vShipToState = string.Empty;
+string vShipViaDesc = string.Empty;
+string vSalesRepEmail = string.Empty;
+string vCCShipCustomer = string.Empty;
+string vPlantCity = string.Empty;
+string vPlantState = string.Empty;
+
+
+
+var SHRow = (from row in ttShipHead select row).LastOrDefault();
+
+if (SHRow != null)
+ {
+ //Epicor.Customization.Bpm.InfoMessage.Publish("1");
+ //Get Customer Record for email addresses
+ Erp.Tables.Customer Customer = (from Customer_Row in Db.Customer
+ where (Customer_Row.Company == SHRow.Company) &&
+ (Customer_Row.CustNum == SHRow.CustNum)
+ select Customer_Row).FirstOrDefault();
+   if (Customer != null)
+    {
+
+      // llk 07-24-17  If exists, CC the Primary Shipping Contact on the Customer
+
+
+      if(Customer.PrimSCon != null && Customer.PrimSCon >= 0) 
+      {
+     Erp.Tables.CustCnt CustCntD = (from CustCnt_Row in Db.CustCnt
+     where (CustCnt_Row.Company == SHRow.Company) &&
+     (CustCnt_Row.CustNum == SHRow.CustNum) &&
+     (CustCnt_Row.ConNum == Customer.PrimSCon)
+     select CustCnt_Row).FirstOrDefault();
+        if (CustCntD != null)
+        {
+        vCCShipCustomer = System.Convert.ToString(CustCntD.EMailAddress);
+        //bpmTo = vShipContact;
+        }
+      }
+
+
+
+
+    //Epicor.Customization.Bpm.InfoMessage.Publish("2");
+    //Get Customer Contact record for Primary Shipping Contact
+    //Erp.Tables.CustCnt CustCnt = (from CustCnt_Row in Db.CustCnt
+    //where (CustCnt_Row.Company == SHRow.Company) &&
+    //(CustCnt_Row.CustNum == SHRow.CustNum) &&
+    //(CustCnt_Row.ConNum == Customer.PrimSCon)
+    //select CustCnt_Row).FirstOrDefault();
+    //  if (CustCnt != null)
+    //   {
+    //   //vShipContact = System.Convert.ToString(CustCnt.EMailAddress);
+    //   }
+    //  else
+    //   {
+    //   //If Primary Shipping Contact does not exist then get Customer Contact record for Primary Billing Contact
+    //   Erp.Tables.CustCnt CustCntB = (from CustCnt_Row in Db.CustCnt
+    //   where (CustCnt_Row.Company == SHRow.Company) &&
+    //   (CustCnt_Row.CustNum == SHRow.CustNum) &&
+    //   (CustCnt_Row.ConNum == Customer.PrimBCon)
+    //   select CustCnt_Row).FirstOrDefault();
+    //     if (CustCntB != null)
+    //      {
+    //      //vShipContact = System.Convert.ToString(CustCntB.EMailAddress);
+     //     }
+     //   } //end else
+
+
+     //Epicor.Customization.Bpm.InfoMessage.Publish(vShipContact);
+ 
+     //Get ShipTo record for name and address
+    Erp.Tables.ShipTo ShipTo = (from ShipTo_Row in Db.ShipTo
+    where (ShipTo_Row.Company == SHRow.Company) &&
+   (ShipTo_Row.CustNum == SHRow.ShipToCustNum) &&
+   (ShipTo_Row.ShipToNum == SHRow.ShipToNum)
+    select ShipTo_Row).FirstOrDefault();
+      if (ShipTo != null)
+        {
+        vShipToName = ShipTo.Name;
+        vShipToCity = ShipTo.City;
+        vShipToState = ShipTo.State;
+        }
+
+
+     //Get Ship Via record for description
+     Erp.Tables.ShipVia ShipVia = (from ShipVia_Row in Db.ShipVia
+     where (ShipVia_Row.Company == SHRow.Company) &&
+     (ShipVia_Row.ShipViaCode == SHRow.ShipViaCode) 
+     select ShipVia_Row).FirstOrDefault();
+      if (ShipVia != null)
+      {
+      vShipViaDesc = ShipVia.Description;
+      }
+
+
+     //Get Ship From Plant City and State
+     Erp.Tables.Plant Plant = (from Plant_Row in Db.Plant
+     where (Plant_Row.Company == SHRow.Company) &&
+     (Plant_Row.Plant1 == SHRow.Plant) 
+     select Plant_Row).FirstOrDefault();
+      if (Plant != null)
+      {
+      vPlantCity = Plant.City;
+      vPlantState = Plant.State;
+      }
+
+
+      // Get SalesReps email address and name
+     Erp.Tables.SalesRep SalesRep = (from SalesRep_Row in Db.SalesRep
+     where (SalesRep_Row.Company == Customer.Company) &&
+     (SalesRep_Row.SalesRepCode ==Customer.SalesRepCode)
+     select SalesRep_Row).FirstOrDefault();
+      if (SalesRep != null)
+      {
+      vSalesRepEmail = System.Convert.ToString(SalesRep.EMailAddress);
+      }
+
+
+ // Build Email Header
+
+ bpmFrom = "smtp.us@habasit.com";
+ //bpmTo = vShipContact;
+ //bpmTo = System.Convert.ToString(CustCnt.EMailAddress);
+ //bpmTo = "laurie.knight@us.habasit.com";
+ //bpmCC = "laurie.knight@us.habasit.com";
+ bpmSubject = "DEV - Habasit - CPC Verification " + System.Convert.ToString(SHRow.PackNum);
+
+// Build Email Body: Ship Header
+ bpmBody =
+
+ //"\nShipping Contact:  " + vShipContact  +
+
+ "\n\nThis order has a CPC Ship Via "  +
+ "\nThe Ship Via needs to verified and changed on the order releases. "  +
+
+ "\n****************************************************************************** "  +
+ "\n\nJob Number: " + SHRow.PackNum.ToString() +
+ "\n\nCustomer ID: " + Customer.CustID +
+ "\nCustomer: " + Customer.Name +
+ "\nCity/St : " + Customer.City +
+ ", " + Customer.State +
+
+ "\n\nSReq Ship Date: " + String.Format("{0:M/d/yyyy}",SHRow.ShipDate) +
+ "\nShipped From: " + vPlantCity +
+ ", " + vPlantState +
+ "\nShip Via:  " + vShipViaDesc +
+ "\n\nShip to:  "  + vShipToName + 
+ "\nCity/St : " + vShipToCity + 
+ ", " + vShipToState +
+
+ "\n****************************************************************************** "  +
+
+ "\n\nPack Lines:\n";
+
+// Add Ship To Name on to subject line
+ bpmSubject =  bpmSubject + "--" + vShipToName;
+
+// Build Email Body: LineDtl
+ foreach (var SDRow in
+ (from ShipDtl_Row in Db.ShipDtl
+ where (ShipDtl_Row.Company == SHRow.Company) &&
+ (ShipDtl_Row.PackNum == SHRow.PackNum)
+ select ShipDtl_Row))
+ {
+
+//Calculate Shipped Qty
+decimal vShippedQty = System.Convert.ToDecimal(SDRow.SellingInventoryShipQty) + System.Convert.ToDecimal(SDRow.SellingJobShipQty);
+
+
+ Erp.Tables.OrderHed OrderHed = (from OrderHed_Row in Db.OrderHed
+ where (OrderHed_Row.Company == SDRow.Company) &&
+ (OrderHed_Row.OrderNum == SDRow.OrderNum) 
+ select OrderHed_Row).FirstOrDefault();
+ if (OrderHed != null)
+  {
+
+   //Get Shipping Contact from first order on packid
+ if (String.IsNullOrEmpty(vShipContact))
+{
+
+   Erp.Tables.CustCnt CustCntC = (from CustCnt_Row in Db.CustCnt
+   where (CustCnt_Row.Company == SHRow.Company) &&
+   (CustCnt_Row.CustNum == SHRow.CustNum) &&
+   (CustCnt_Row.ConNum == OrderHed.PrcConNum)
+   select CustCnt_Row).FirstOrDefault();
+    if (CustCntC != null)
+    {
+    vShipContact = System.Convert.ToString(CustCntC.EMailAddress);
+    bpmTo = vShipContact;
+
+    }
+
+}
+ 
+ bpmBody = bpmBody +
+ "\nItem " + System.Convert.ToString(SDRow.PackLine) +
+ ": Habasit Order Number:" + System.Convert.ToString(SDRow.OrderNum) +
+ "-" + System.Convert.ToString(SDRow.OrderLine) +
+ "-" + System.Convert.ToString(SDRow.OrderRelNum)  + "     PO Number:  " + System.Convert.ToString(OrderHed.PONum) +
+ "\nPart: " + System.Convert.ToString(SDRow.PartNum) +
+ " " + System.Convert.ToString(SDRow.LineDesc) +
+// "\nOrdered: " + System.Convert.ToString(SDRow.SellingReqQty) + "Shipped: " + System.Convert.ToString(vShippedQty) +
+"\n Shipped: " + System.Convert.ToString(Math.Round(vShippedQty,3)) +
+
+//Temporary - take out after testing
+//"\nShipping Contact:  " + vShipContact  +
+
+ "\n\n";
+ }
+  }
+// Build Email Body: Footer
+// Default email if blank
+ if (String.IsNullOrEmpty(vShipContact))
+  {
+  vShipContact =  "laurie.knight@us.habasit.com";
+  }
+
+ bpmBody = bpmBody +
+
+//Displaying Salesep - take out after testing
+//"\n\nSalesRep: " +
+//System.Convert.ToString(Customer.SalesRepCode) +
+//"\nSales Person: " +
+//System.Convert.ToString(SalesRep.Name) +
+//"\nSalesRep email: " +
+//System.Convert.ToString(SalesRep.EMailAddress) +
+//"\nvSalesRepEmail: " + vSalesRepEmail +
+
+//Temporary - take out after testing
+//  "\nShipping Contact:  " + vShipContact  +
+//  "\nPrimary Ship Contact:  " + vCCShipCustomer  +
+
+
+ "\n\n\nFor detailed information, please login to www.myhabasitecc.com " +
+
+ "\n\n\nPLEASE NOTE: This e-mail was sent from a notification-only address \nthat cannot accept incoming e-mail. Do not reply to this message.";
+
+//Epicor.Customization.Bpm.InfoMessage.Publish(vShipContact);
+
+try
+{
+// Send Email
+
+//Setup Default email - take this out when done testing
+//bpmTo =  "laurie.knight@us.habasit.com";
+bpmTo = vShipContact;
+bpmCC = vSalesRepEmail + ";laurie.knight@us.habasit.com" + ";" + vCCShipCustomer;
+
+ var mailer = GetMailer(async: true);
+ var message = new Ice.Mail.SmtpMail();
+ message.SetFrom(bpmFrom);
+ message.SetTo(bpmTo);
+ message.SetCC(bpmCC);
+ message.SetSubject(bpmSubject);
+ message.SetBody(bpmBody);
+ //Epicor.Customization.Bpm.InfoMessage.Publish("9");
+ mailer.Send(message);
+
+}
+catch (Exception ex)
+{
+ Epicor.Customization.Bpm.InfoMessage.Publish(ex.ToString());
+}
+
+
+ } 
+}
+
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
    
    
 
@@ -105,7 +398,7 @@ if (ttLaborDtl_xRow != null)
 System.IO.File.AppendAllText (path + fileName, processingDetails); 
 
 } //ttlabordtl
-" ExecutionRule="OnceForAllMatching" Id="0" IsAsync="False" RecordMode="Nothing" TerminateOnError="False" ValidationState="Valid" /></DirectiveStep.Action><DirectiveStep.VisualProperties><p:VisualPropertiesStorage><x:Double x:Key="ElementX">373</x:Double><x:Double x:Key="ElementY">142</x:Double><iubd:TextNote Text="{x:Null}" x:Key="Note" Background="Yellow" IsExpanded="False" IsNotifying="True" X="0" Y="0" /></p:VisualPropertiesStorage></DirectiveStep.VisualProperties></DirectiveStep><DirectiveCondition False="{x:Null}" True="{x:Null}" DisplayName="Condition 0" Id="f5f29883-1b80-4c70-9d3b-2ca180ef273a"><DirectiveCondition.Condition><ConditionBlock><ConditionBlock.Items><ConditionBlockItem Postfix="{x:Null}" Prefix="{x:Null}" Operator="None"><ConditionBlockItem.Condition><ilbmc:FieldCondition VisualProperties="{x:Null}" Filter="Changed" Id="0" Operator="NotEqualsTo" ValidationState="Valid"><ilbmc:FieldCondition.Expression><ExpressionDefinition Text=""D""><ExpressionDefinition.TableParameters><scg:List x:TypeArguments="TableParameter" Capacity="0" /></ExpressionDefinition.TableParameters></ExpressionDefinition></ilbmc:FieldCondition.Expression><ilbmc:FieldCondition.Field><ColumnInfo ColumnName="RowMod" DataType="System.String" IsExtensionTable="False" IsUd="False" TableName="ttLaborDtl" TableRowTypeName="Erp.Tablesets.LaborDtlRow" /></ilbmc:FieldCondition.Field></ilbmc:FieldCondition></ConditionBlockItem.Condition></ConditionBlockItem></ConditionBlock.Items></ConditionBlock></DirectiveCondition.Condition><DirectiveCondition.VisualProperties><p:VisualPropertiesStorage><x:Double x:Key="ElementX">557</x:Double><x:Double x:Key="ElementY">144</x:Double><iubd:TextNote Text="{x:Null}" x:Key="Note" Background="Yellow" IsExpanded="False" IsNotifying="True" X="0" Y="0" /></p:VisualPropertiesStorage></DirectiveCondition.VisualProperties></DirectiveCondition></DirectiveDefinition.Nodes><DirectiveDefinition.Variables><scg:List x:TypeArguments="DirectiveVariable" Capacity="0" /></DirectiveDefinition.Variables><DirectiveDefinition.VisualProperties><p:VisualPropertiesStorage><x:Int32 x:Key="Ice.UI.Bpm.Widgets.CallBpmDataFormViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.CallScWorkflowViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.CustomCodeActionViewModelInstanceCounter">1</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.AttachDataTagViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.RemoveDataTagViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.ConditionViewModelInstanceCounter">1</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.AttachHoldViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.RemoveHoldsViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.InvokeBOMethodViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.InvokeEpicorFunctionViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.InvokeNetMethodViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.NotificationViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.FillTableByQueryViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.UpdateTableByQueryViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.RaiseExceptionViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.SendMailViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.SetArgumentViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.SetBpmDataFieldViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.SetByQueryViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.SetFieldViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.ShowMessageViewModelInstanceCounter">0</x:Int32><x:Double x:Key="ElementX">556</x:Double><x:Double x:Key="ElementY">20</x:Double><iubd:TextNote Text="{x:Null}" x:Key="Note" Background="Yellow" IsExpanded="False" IsNotifying="True" X="0" Y="0" /></p:VisualPropertiesStorage></DirectiveDefinition.VisualProperties></DirectiveDefinition>]]></Body>
+" ExecutionRule="OnceForAllMatching" Id="0" IsAsync="False" RecordMode="Nothing" TerminateOnError="False" ValidationState="Invalid" /></DirectiveStep.Action><DirectiveStep.VisualProperties><p:VisualPropertiesStorage><x:Double x:Key="ElementX">373</x:Double><x:Double x:Key="ElementY">142</x:Double><iubd:TextNote Text="{x:Null}" x:Key="Note" Background="Yellow" IsExpanded="False" IsNotifying="True" X="0" Y="0" /></p:VisualPropertiesStorage></DirectiveStep.VisualProperties></DirectiveStep><DirectiveCondition False="{x:Null}" True="{x:Null}" DisplayName="Condition 0" Id="f5f29883-1b80-4c70-9d3b-2ca180ef273a"><DirectiveCondition.Condition><ConditionBlock><ConditionBlock.Items><ConditionBlockItem Postfix="{x:Null}" Prefix="{x:Null}" Operator="None"><ConditionBlockItem.Condition><ilbmc:FieldCondition VisualProperties="{x:Null}" Filter="Changed" Id="0" Operator="NotEqualsTo" ValidationState="Valid"><ilbmc:FieldCondition.Expression><ExpressionDefinition Text=""D""><ExpressionDefinition.TableParameters><scg:List x:TypeArguments="TableParameter" Capacity="0" /></ExpressionDefinition.TableParameters></ExpressionDefinition></ilbmc:FieldCondition.Expression><ilbmc:FieldCondition.Field><ColumnInfo ColumnName="RowMod" DataType="System.String" IsExtensionTable="False" IsUd="False" TableName="ttLaborDtl" TableRowTypeName="Erp.Tablesets.LaborDtlRow" /></ilbmc:FieldCondition.Field></ilbmc:FieldCondition></ConditionBlockItem.Condition></ConditionBlockItem></ConditionBlock.Items></ConditionBlock></DirectiveCondition.Condition><DirectiveCondition.VisualProperties><p:VisualPropertiesStorage><x:Double x:Key="ElementX">557</x:Double><x:Double x:Key="ElementY">144</x:Double><iubd:TextNote Text="{x:Null}" x:Key="Note" Background="Yellow" IsExpanded="False" IsNotifying="True" X="0" Y="0" /></p:VisualPropertiesStorage></DirectiveCondition.VisualProperties></DirectiveCondition></DirectiveDefinition.Nodes><DirectiveDefinition.Variables><scg:List x:TypeArguments="DirectiveVariable" Capacity="0" /></DirectiveDefinition.Variables><DirectiveDefinition.VisualProperties><p:VisualPropertiesStorage><x:Int32 x:Key="Ice.UI.Bpm.Widgets.CallBpmDataFormViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.CallScWorkflowViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.CustomCodeActionViewModelInstanceCounter">1</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.AttachDataTagViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.RemoveDataTagViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.ConditionViewModelInstanceCounter">1</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.AttachHoldViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.RemoveHoldsViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.InvokeBOMethodViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.InvokeEpicorFunctionViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.InvokeNetMethodViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.NotificationViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.FillTableByQueryViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.UpdateTableByQueryViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.RaiseExceptionViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.SendMailViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.SetArgumentViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.SetBpmDataFieldViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.SetByQueryViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.SetFieldViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.ShowMessageViewModelInstanceCounter">0</x:Int32><x:Double x:Key="ElementX">556</x:Double><x:Double x:Key="ElementY">20</x:Double><iubd:TextNote Text="{x:Null}" x:Key="Note" Background="Yellow" IsExpanded="False" IsNotifying="True" X="0" Y="0" /></p:VisualPropertiesStorage></DirectiveDefinition.VisualProperties></DirectiveDefinition>]]></Body>
       <SysRevID>System.Byte[]</SysRevID>
       <SysRowID>fb7de064-e463-4d88-a93d-8d9c09d9d24c</SysRowID>
     </Details>
