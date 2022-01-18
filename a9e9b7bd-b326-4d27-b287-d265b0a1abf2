@@ -34,7 +34,7 @@ Erp.Tables.Customer Customer;
      
      
      
-      Epicor.Customization.Bpm.InfoMessage.Publish("Starting BPM");
+      //Epicor.Customization.Bpm.InfoMessage.Publish("Starting BPM");
  var LDRow = (from row in ttLaborDtl select row).LastOrDefault();
  
 /*Get the current labor detail record*/
@@ -45,7 +45,7 @@ if (LDRow != null)
   if (LDRow.EndActivity)
     {
   processingDetails = processingDetails + "ttLaborDtl.EndActivity.." + Environment.NewLine;
- Epicor.Customization.Bpm.InfoMessage.Publish("EndActivity Found");
+ //Epicor.Customization.Bpm.InfoMessage.Publish("EndActivity Found");
     callContextBpmData["CheckBox02"] = false;        
     bool checkIt = true;
    
