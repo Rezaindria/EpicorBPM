@@ -42,7 +42,7 @@ if (ttLaborDtl_xRow != null)
 
     callContextBpmData["CheckBox02"] = false;        
     bool checkIt = true;
-    bool hasLaterOps = false;
+   
     /* Check to see if it is for SUW */
     JobHead = (from JobHead_Row in Db.JobHead
                where JobHead_Row.Company == Session.CompanyID &&
@@ -52,7 +52,7 @@ if (ttLaborDtl_xRow != null)
     if (JobHead != null)
     {
     
-    processingDetails = processingDetails + "JobHead.Plant = " + JobHead.Plant + Environment.NewLine;
+        processingDetails = processingDetails + "JobHead.Plant = " + JobHead.Plant + Environment.NewLine;
         if (string.Compare(JobHead.Plant, "SUW", true) != 0)
         {
             checkIt = false; 
@@ -74,7 +74,7 @@ if (ttLaborDtl_xRow != null)
             processingDetails = processingDetails + "JobOper.OprSeq = " + JobOper.OprSeq + Environment.NewLine;        
             processingDetails = processingDetails + "ttLaborDtl_xRow.OprSeq = " + ttLaborDtl_xRow.OprSeq + Environment.NewLine;
     
-        processingDetails = processingDetails + "JobOper.OpCode = " + JobOper.OpCode + Environment.NewLine;
+            processingDetails = processingDetails + "JobOper.OpCode = " + JobOper.OpCode + Environment.NewLine;
         
         
             if (JobOper.OpCode != "S0900")
@@ -82,17 +82,18 @@ if (ttLaborDtl_xRow != null)
             checkIt = false; 
 
         }
-                    processingDetails = processingDetails + "checkIt = " + checkIt  + Environment.NewLine;
+            processingDetails = processingDetails + "checkIt = " + checkIt  + Environment.NewLine;
     }  //if JobOper
     
     /* We use checkIt to determine if we should do the check or not */
-                    processingDetails = processingDetails + "If checkIt = " + checkIt  + Environment.NewLine;
+            processingDetails = processingDetails + "If checkIt = " + checkIt  + Environment.NewLine;
+
     if (checkIt)
     {
-//Ice.Diagnostics.Log.WriteEntry("In CheckIt");
+   //Ice.Diagnostics.Log.WriteEntry("In CheckIt");
    // Compose email
    
-   
+  
 string bpmFrom = string.Empty;
 string bpmTo = string.Empty;
 string bpmCC = string.Empty;
@@ -111,7 +112,7 @@ string vPlantState = string.Empty;
 
 
 
-var SHRow = (from row in ttShipHead select row).LastOrDefault();
+var ORRow = (from row in OrderRel select row).LastOrDefault();
 
 if (SHRow != null)
  {
