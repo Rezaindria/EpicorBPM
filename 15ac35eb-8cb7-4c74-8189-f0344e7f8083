@@ -6,7 +6,7 @@
       <BpMethodCode>Erp.Labor.Update</BpMethodCode>
       <Name>Labor - Send Notification for CPC</Name>
       <Order>20</Order>
-      <IsEnabled>False</IsEnabled>
+      <IsEnabled>True</IsEnabled>
       <ReenterMax>1000</ReenterMax>
       <PreventDeadloops>False</PreventDeadloops>
       <VisibilityScope>0</VisibilityScope>
@@ -14,7 +14,7 @@
       <DirectiveGroup>Labor - Send Notification for CPC</DirectiveGroup>
       <IsUpToDate>True</IsUpToDate>
       <CGCCode />
-      <Body><![CDATA[<?xml version="1.0" encoding="utf-16"?><DirectiveDefinition mc:Ignorable="p" AdditionalUsings="{x:Null}" StartNode="{x:Null}" Version="116" xmlns="clr-namespace:Ice.Lib.Bpm.Model;assembly=Ice.Lib.Bpm.Shared" xmlns:icbb="clr-namespace:Ice.Contracts.BO.BpMethod;assembly=Ice.Contracts.BO.BpMethod" xmlns:ilbma="clr-namespace:Ice.Lib.Bpm.Model.Actions;assembly=Ice.Lib.Bpm.Shared" xmlns:ilbmc="clr-namespace:Ice.Lib.Bpm.Model.Conditions;assembly=Ice.Lib.Bpm.Shared" xmlns:iubd="clr-namespace:Ice.UI.Bpm.Designer;assembly=Ice.UI.Bpm.Designer" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:p="http://epicor.com/BpmDesigner/Ignorable" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=mscorlib" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"><DirectiveDefinition.AdditionalReferences><scg:List x:TypeArguments="icbb:ReferencesGroup" Capacity="0" /></DirectiveDefinition.AdditionalReferences><DirectiveDefinition.Nodes><DirectiveStep Next="{x:Null}" DisplayName="Execute Custom Code 0" Id="c087beca-ac0e-4bee-abe8-c8342374a9be"><DirectiveStep.Action><ilbma:CustomCodeAction PrimaryTable="{x:Null}" Code="// Job has started - if Order ShipVia is CPC, then send an email notification to CCR   l. Knight 01-17-22
+      <Body><![CDATA[<?xml version="1.0" encoding="utf-16"?><DirectiveDefinition mc:Ignorable="p" AdditionalUsings="{x:Null}" Version="116" xmlns="clr-namespace:Ice.Lib.Bpm.Model;assembly=Ice.Lib.Bpm.Shared" xmlns:av="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:cm="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro" xmlns:icbb="clr-namespace:Ice.Contracts.BO.BpMethod;assembly=Ice.Contracts.BO.BpMethod" xmlns:ilbma="clr-namespace:Ice.Lib.Bpm.Model.Actions;assembly=Ice.Lib.Bpm.Shared" xmlns:ilbmc="clr-namespace:Ice.Lib.Bpm.Model.Conditions;assembly=Ice.Lib.Bpm.Shared" xmlns:iubd="clr-namespace:Ice.UI.Bpm.Designer;assembly=Ice.UI.Bpm.Designer" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:p="http://epicor.com/BpmDesigner/Ignorable" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=mscorlib" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"><DirectiveDefinition.AdditionalReferences><scg:List x:TypeArguments="icbb:ReferencesGroup" Capacity="0" /></DirectiveDefinition.AdditionalReferences><DirectiveDefinition.Nodes><x:Reference>__ReferenceID0</x:Reference><x:Reference>__ReferenceID1</x:Reference></DirectiveDefinition.Nodes><DirectiveDefinition.StartNode><DirectiveCondition False="{x:Null}" x:Name="__ReferenceID1" DisplayName="Condition 0" Id="f5f29883-1b80-4c70-9d3b-2ca180ef273a"><DirectiveCondition.Condition><ConditionBlock><ConditionBlock.Items><ConditionBlockItem Postfix="{x:Null}" Prefix="{x:Null}" Operator="None"><ConditionBlockItem.Condition><ilbmc:FieldCondition VisualProperties="{x:Null}" Filter="Changed" Id="0" Operator="NotEqualsTo" ValidationState="Valid"><ilbmc:FieldCondition.Expression><ExpressionDefinition Text=""D""><ExpressionDefinition.TableParameters><scg:List x:TypeArguments="TableParameter" Capacity="0" /></ExpressionDefinition.TableParameters></ExpressionDefinition></ilbmc:FieldCondition.Expression><ilbmc:FieldCondition.Field><ColumnInfo ColumnName="RowMod" DataType="System.String" IsExtensionTable="False" IsUd="False" TableName="ttLaborDtl" TableRowTypeName="Erp.Tablesets.LaborDtlRow" /></ilbmc:FieldCondition.Field></ilbmc:FieldCondition></ConditionBlockItem.Condition></ConditionBlockItem></ConditionBlock.Items></ConditionBlock></DirectiveCondition.Condition><DirectiveCondition.True><DirectiveStep Next="{x:Null}" x:Name="__ReferenceID0" DisplayName="Execute Custom Code 0" Id="c087beca-ac0e-4bee-abe8-c8342374a9be"><DirectiveStep.Action><ilbma:CustomCodeAction PrimaryTable="{x:Null}" Code="// Job has started - if Order ShipVia is CPC, then send an email notification to CCR   l. Knight 01-17-22
 
 string processingDetails = string.Empty;
 string path = @"\\hussv022\c$\Logs\";
@@ -24,7 +24,10 @@ processingDetails = processingDetails + "Starting Labor - Send Notification for 
 
 Erp.Tables.JobHead JobHead;
 Erp.Tables.JobOper JobOper;
+Erp.Tables.JobProd JobProd;
 Erp.Tables.OrderRel OrderRel;
+Erp.Tables.OrderDtl OrderDtl;
+Erp.Tables.OrderHed OrderHed;
 Erp.Tables.Customer Customer;
 
 //Ice.Diagnostics.Log.WriteEntry("IN IN IN");
@@ -60,7 +63,6 @@ if (LDRow != null)
         }
              processingDetails = processingDetails + "checkIt = " + checkIt  + Environment.NewLine;
     }
-
 
     JobOper = (from JobOper_Row in Db.JobOper
                where JobOper_Row.Company == Session.CompanyID &&
@@ -103,32 +105,119 @@ string vCustCnt = string.Empty;
 string vCRMCase = string.Empty;
 
 
+// Read JobProd to get order number
+
+JobProd = (from JobProd_Row in Db.JobProd
+ where (JobProd_Row.Company == JobHead.Company) &&
+(JobProd_Row.JobNum == JobHead.JobNum) 
+select JobProd_Row).FirstOrDefault();
+ {
+
+if (JobProd != null)
+ {
+ 
   OrderRel = (from OrderRel_Row in Db.OrderRel
-  where (OrderRel_Row.Company == JobHead.Company) &&
- (OrderRel_Row.OrderNum == JobHead.OrderNum) &&
- (OrderRel_Row.OrderLine == JobHead.OrderLine) &&
- (OrderRel_Row.OrderRelNum == JobHead.OrderRelNum) 
+  where (OrderRel_Row.Company == JobProd.Company) &&
+ (OrderRel_Row.OrderNum == JobProd.OrderNum) &&
+ (OrderRel_Row.OrderLine == JobProd.OrderLine) &&
+ (OrderRel_Row.OrderRelNum == JobProd.OrderRelNum) 
  select OrderRel_Row).FirstOrDefault();
  {
 
-if (ORRow != null)
+if (OrderRel != null)
  {
+ 
+
+ OrderDtl = (from OrderDtl_Row in Db.OrderDtl
+ where (OrderDtl_Row.Company == OrderRel.Company) &&
+ (OrderDtl_Row.OrderNum == OrderRel.OrderNum) &&
+ (OrderDtl_Row.OrderLine == OrderRel.OrderLine)
+ select OrderDtl_Row).FirstOrDefault();
+ {
+
+if (OrderDtl != null)
+ {
+ 
+  OrderHed = (from OrderHed_Row in Db.OrderHed
+ where (OrderHed_Row.Company == OrderRel.Company) &&
+ (OrderHed_Row.OrderNum == OrderRel.OrderNum) 
+ select OrderHed_Row).FirstOrDefault();
+ {
+
+if (OrderHed != null)
+ {
+ 
+ 
+ // SugarCRM Case number - used below
+ vCRMCase = (string)OrderHed["ShortChar07"];
+
+ Erp.Tables.Customer Cust = (from Customer_Row in Db.Customer
+ where (Customer_Row.Company == OrderHed.Company) &&
+ (Customer_Row.CustNum == OrderHed.CustNum)
+ select Customer_Row).FirstOrDefault();
+ 
+     // Get Contact name and email address
+     Erp.Tables.CustCnt CustCnt = (from CustCnt_Row in Db.CustCnt
+     where (CustCnt_Row.Company == OrderHed.Company) &&
+     (CustCnt_Row.CustNum == OrderHed.CustNum)&&
+     (CustCnt_Row.ConNum == OrderHed.PrcConNum)  
+     select CustCnt_Row).FirstOrDefault();
+          if (CustCnt != null)
+          {
+            vCustCnt = System.Convert.ToString(CustCnt.Name);
+          }
+ 
+ 
+ 
+// Build Email Header
+ bpmFrom = "smtp.us@habasit.com";
+ //bpmTo = System.Convert.ToString(SalesRep.EMailAddress);
+ bpmTo = "laurie.knight@habasit.com";
+ bpmCC = "laurie.knight@habasit.com";
+ bpmSubject = "TEST - ShipVia Required for Order# " + System.Convert.ToString(OrderHed.OrderNum) + " - " + System.Convert.ToString(Cust.Name);
+ 
+     //Sugar Case Number: If a case number is entered on the Order Header, then append it to the subject line and add //HA.FOOD@us.habasit.com to the cc line
+    
+     if (vCRMCase != "")
+       {
+     bpmSubject = "TEST - ShipVia Required for Order# " + System.Convert.ToString(OrderHed.OrderNum) + " - " + System.Convert.ToString(Cust.Name) + "[CASE:" + vCRMCase + "]";
+     bpmCC = "Laurie.Knight@habasit.com; case_it@habasit.com";
+       }
+ 
+ 
+ // Build Email Body: Order Header
+ bpmBody =
+ "\nOrder Number:   " + System.Convert.ToString(OrderHed.OrderNum) +
+ "\nPO Number:      " + System.Convert.ToString(OrderHed.PONum) +
+ "\n\nCustomer ID:  " + System.Convert.ToString(Cust.CustID) +
+ "\n\nCustomer:     " + System.Convert.ToString(Cust.Name) +
+ "\n\nContact:      " + vCustCnt +
+ //"\nContact email:  " + System.Convert.ToString(CustCnt.EMailAddress) +
+ "\n\nCity/St :     " + System.Convert.ToString(Cust.City) +
+ ", " + System.Convert.ToString(Cust.State) +
+
+ //"\n\nShip By: " + bpmReqDate +
+ "\n\nOrder Date:   " + String.Format("{0:M/d/yyyy}",OrderHed.OrderDate) +
+ "\n\nOrder Lines:  " + System.Convert.ToString(OrderHed.TotalLines) +
+ "\n" +
+  "\nShip Via:      " + System.Convert.ToString(OrderRel.ShipViaCode) +
+ "\n";
+ 
+ 
+ 
+ 
+ }// OrderHed != null
+ }//OrderHed
+   
+ }// OrderDtl != null
+ }//OrderDtl
+
  }  //ODRow
+ }  //OrderRel 
  
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
+  }  //JobProd != null
+ }  //JobProd
+
 try
 {
 // Send Email
@@ -164,7 +253,7 @@ catch (Exception ex)
 System.IO.File.AppendAllText (path + fileName, processingDetails); 
 
 } //ttlabordtl
-" ExecutionRule="OnceForAllMatching" Id="0" IsAsync="False" RecordMode="Nothing" TerminateOnError="False" ValidationState="Invalid" /></DirectiveStep.Action><DirectiveStep.VisualProperties><p:VisualPropertiesStorage><x:Double x:Key="ElementX">372</x:Double><x:Double x:Key="ElementY">142</x:Double><iubd:TextNote Text="{x:Null}" x:Key="Note" Background="Yellow" IsExpanded="False" IsNotifying="True" X="0" Y="0" /></p:VisualPropertiesStorage></DirectiveStep.VisualProperties></DirectiveStep><DirectiveCondition False="{x:Null}" True="{x:Null}" DisplayName="Condition 0" Id="f5f29883-1b80-4c70-9d3b-2ca180ef273a"><DirectiveCondition.Condition><ConditionBlock><ConditionBlock.Items><ConditionBlockItem Postfix="{x:Null}" Prefix="{x:Null}" Operator="None"><ConditionBlockItem.Condition><ilbmc:FieldCondition VisualProperties="{x:Null}" Filter="Changed" Id="0" Operator="NotEqualsTo" ValidationState="Valid"><ilbmc:FieldCondition.Expression><ExpressionDefinition Text=""D""><ExpressionDefinition.TableParameters><scg:List x:TypeArguments="TableParameter" Capacity="0" /></ExpressionDefinition.TableParameters></ExpressionDefinition></ilbmc:FieldCondition.Expression><ilbmc:FieldCondition.Field><ColumnInfo ColumnName="RowMod" DataType="System.String" IsExtensionTable="False" IsUd="False" TableName="ttLaborDtl" TableRowTypeName="Erp.Tablesets.LaborDtlRow" /></ilbmc:FieldCondition.Field></ilbmc:FieldCondition></ConditionBlockItem.Condition></ConditionBlockItem></ConditionBlock.Items></ConditionBlock></DirectiveCondition.Condition><DirectiveCondition.VisualProperties><p:VisualPropertiesStorage><x:Double x:Key="ElementX">557</x:Double><x:Double x:Key="ElementY">144</x:Double><iubd:TextNote Text="{x:Null}" x:Key="Note" Background="Yellow" IsExpanded="False" IsNotifying="True" X="0" Y="0" /></p:VisualPropertiesStorage></DirectiveCondition.VisualProperties></DirectiveCondition></DirectiveDefinition.Nodes><DirectiveDefinition.Variables><scg:List x:TypeArguments="DirectiveVariable" Capacity="0" /></DirectiveDefinition.Variables><DirectiveDefinition.VisualProperties><p:VisualPropertiesStorage><x:Int32 x:Key="Ice.UI.Bpm.Widgets.CallBpmDataFormViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.CallScWorkflowViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.CustomCodeActionViewModelInstanceCounter">1</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.AttachDataTagViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.RemoveDataTagViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.ConditionViewModelInstanceCounter">1</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.AttachHoldViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.RemoveHoldsViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.InvokeBOMethodViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.InvokeEpicorFunctionViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.InvokeNetMethodViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.NotificationViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.FillTableByQueryViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.UpdateTableByQueryViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.RaiseExceptionViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.SendMailViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.SetArgumentViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.SetBpmDataFieldViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.SetByQueryViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.SetFieldViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.ShowMessageViewModelInstanceCounter">0</x:Int32><x:Double x:Key="ElementX">556</x:Double><x:Double x:Key="ElementY">20</x:Double><iubd:TextNote Text="{x:Null}" x:Key="Note" Background="Yellow" IsExpanded="False" IsNotifying="True" X="0" Y="0" /></p:VisualPropertiesStorage></DirectiveDefinition.VisualProperties></DirectiveDefinition>]]></Body>
+" ExecutionRule="OnceForAllMatching" Id="0" IsAsync="False" RecordMode="Nothing" TerminateOnError="False" ValidationState="Valid" /></DirectiveStep.Action><DirectiveStep.VisualProperties><p:VisualPropertiesStorage><x:Double x:Key="ElementX">372</x:Double><x:Double x:Key="ElementY">142</x:Double><iubd:TextNote Text="{x:Null}" x:Key="Note" Background="Yellow" IsExpanded="False" IsNotifying="True" X="0" Y="0" /></p:VisualPropertiesStorage></DirectiveStep.VisualProperties></DirectiveStep></DirectiveCondition.True><DirectiveCondition.VisualProperties><p:VisualPropertiesStorage><x:Double x:Key="ElementX">557</x:Double><x:Double x:Key="ElementY">144</x:Double><iubd:TextNote Text="{x:Null}" x:Key="Note" Background="Yellow" IsExpanded="False" IsNotifying="True" X="0" Y="0" /><iubd:LinkProperties x:Key="TrueExitLink" DestinationConnectorId="10" SourceConnectorId="7"><iubd:LinkProperties.Points><cm:BindableCollection x:TypeArguments="av:Point" IsNotifying="True"><av:Point>557,189</av:Point><av:Point>492,187</av:Point></cm:BindableCollection></iubd:LinkProperties.Points></iubd:LinkProperties></p:VisualPropertiesStorage></DirectiveCondition.VisualProperties></DirectiveCondition></DirectiveDefinition.StartNode><DirectiveDefinition.Variables><scg:List x:TypeArguments="DirectiveVariable" Capacity="0" /></DirectiveDefinition.Variables><DirectiveDefinition.VisualProperties><p:VisualPropertiesStorage><x:Int32 x:Key="Ice.UI.Bpm.Widgets.CallBpmDataFormViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.CallScWorkflowViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.CustomCodeActionViewModelInstanceCounter">1</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.AttachDataTagViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.RemoveDataTagViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.ConditionViewModelInstanceCounter">1</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.AttachHoldViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.RemoveHoldsViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.InvokeBOMethodViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.InvokeEpicorFunctionViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.InvokeNetMethodViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.NotificationViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.FillTableByQueryViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.UpdateTableByQueryViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.RaiseExceptionViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.SendMailViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.SetArgumentViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.SetBpmDataFieldViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.SetByQueryViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.SetFieldViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.ShowMessageViewModelInstanceCounter">0</x:Int32><x:Double x:Key="ElementX">556</x:Double><x:Double x:Key="ElementY">20</x:Double><iubd:TextNote Text="{x:Null}" x:Key="Note" Background="Yellow" IsExpanded="False" IsNotifying="True" X="0" Y="0" /><iubd:LinkProperties x:Key="ExitLink" DestinationConnectorId="1" SourceConnectorId="4"><iubd:LinkProperties.Points><cm:BindableCollection x:TypeArguments="av:Point" IsNotifying="True"><av:Point>616,110</av:Point><av:Point>617,144</av:Point></cm:BindableCollection></iubd:LinkProperties.Points></iubd:LinkProperties></p:VisualPropertiesStorage></DirectiveDefinition.VisualProperties></DirectiveDefinition>]]></Body>
       <SysRevID>System.Byte[]</SysRevID>
       <SysRowID>fb7de064-e463-4d88-a93d-8d9c09d9d24c</SysRowID>
     </Details>
