@@ -6,7 +6,7 @@
       <BpMethodCode>Erp.Labor.Update</BpMethodCode>
       <Name>Labor - Send Notification for CPC</Name>
       <Order>20</Order>
-      <IsEnabled>True</IsEnabled>
+      <IsEnabled>False</IsEnabled>
       <ReenterMax>1000</ReenterMax>
       <PreventDeadloops>False</PreventDeadloops>
       <VisibilityScope>0</VisibilityScope>
