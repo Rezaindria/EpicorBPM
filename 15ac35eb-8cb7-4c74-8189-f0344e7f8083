@@ -33,18 +33,21 @@ Erp.Tables.OrderHed OrderHed;
 Erp.Tables.Customer Customer;
 
 //Ice.Diagnostics.Log.WriteEntry("IN IN IN");
-                       
+     
+     
+     
+      Epicor.Customization.Bpm.InfoMessage.Publish("Starting BPM");
  var LDRow = (from row in ttLaborDtl select row).LastOrDefault();
  
 /*Get the current labor detail record*/
 if (LDRow != null)
 {
-
+      Epicor.Customization.Bpm.InfoMessage.Publish("LaborDtl Found");
   //Only run the code for "End Activity"
   if (LDRow.EndActivity)
     {
   processingDetails = processingDetails + "ttLaborDtl.EndActivity.." + Environment.NewLine;
-
+ Epicor.Customization.Bpm.InfoMessage.Publish("EndActivity Found");
     callContextBpmData["CheckBox02"] = false;        
     bool checkIt = true;
    
@@ -56,7 +59,7 @@ if (LDRow != null)
 
     if (JobHead != null)
     {
-    
+    Epicor.Customization.Bpm.InfoMessage.Publish("JobHead Found"); 
         processingDetails = processingDetails + "JobHead.Plant = " + JobHead.Plant + Environment.NewLine;
         if (string.Compare(JobHead.Plant, "SUW", true) != 0)
         {
@@ -75,6 +78,7 @@ if (LDRow != null)
       //Only check material on OPCODE S0900 - Pulling
     if (JobOper != null)
     {
+     Epicor.Customization.Bpm.InfoMessage.Publish("JobOper Found");
             processingDetails = processingDetails + "JobOper.OprSeq = " + JobOper.OprSeq + Environment.NewLine;        
             processingDetails = processingDetails + "ttLaborDtl_xRow.OprSeq = " + LDRow.OprSeq + Environment.NewLine;
     
@@ -118,7 +122,7 @@ select JobProd_Row).FirstOrDefault();
 
 if (JobProd != null)
  {
- 
+  Epicor.Customization.Bpm.InfoMessage.Publish("JobProd Found");
   OrderRel = (from OrderRel_Row in Db.OrderRel
   where (OrderRel_Row.Company == JobProd.Company) &&
  (OrderRel_Row.OrderNum == JobProd.OrderNum) &&
@@ -140,7 +144,7 @@ if (OrderRel != null)
 
 if (OrderDtl != null)
  {
- 
+  Epicor.Customization.Bpm.InfoMessage.Publish("OrderDtl Found");
   OrderHed = (from OrderHed_Row in Db.OrderHed
  where (OrderHed_Row.Company == OrderRel.Company) &&
  (OrderHed_Row.OrderNum == OrderRel.OrderNum) 
