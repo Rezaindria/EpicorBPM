@@ -80,7 +80,7 @@ if (LDRow != null)
         
         
             //if (JobOper.OpCode != "S0900")
-            if (JobOper.OpCode != "S110100")
+            if (JobOper.OpCode != "SUW11010")
         {
             checkIt = false; 
 
