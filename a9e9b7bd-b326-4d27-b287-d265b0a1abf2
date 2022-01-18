@@ -40,7 +40,7 @@ Erp.Tables.Customer Customer;
 /*Get the current labor detail record*/
 if (LDRow != null)
 {
-      Epicor.Customization.Bpm.InfoMessage.Publish("LaborDtl Found");
+      //Epicor.Customization.Bpm.InfoMessage.Publish("LaborDtl Found");
   //Only run the code for "End Activity"
   if (LDRow.EndActivity)
     {
@@ -57,7 +57,7 @@ if (LDRow != null)
 
     if (JobHead != null)
     {
-    Epicor.Customization.Bpm.InfoMessage.Publish("JobHead Found"); 
+   // Epicor.Customization.Bpm.InfoMessage.Publish("JobHead Found"); 
         processingDetails = processingDetails + "JobHead.Plant = " + JobHead.Plant + Environment.NewLine;
         if (string.Compare(JobHead.Plant, "SUW", true) != 0)
         {
@@ -76,7 +76,7 @@ if (LDRow != null)
       //Only check material on OPCODE S0900 - Pulling
     if (JobOper != null)
     {
-     Epicor.Customization.Bpm.InfoMessage.Publish("JobOper Found");
+     //Epicor.Customization.Bpm.InfoMessage.Publish("JobOper Found");
             processingDetails = processingDetails + "JobOper.OprSeq = " + JobOper.OprSeq + Environment.NewLine;        
             processingDetails = processingDetails + "ttLaborDtl_xRow.OprSeq = " + LDRow.OprSeq + Environment.NewLine;
     
@@ -120,7 +120,7 @@ select JobProd_Row).FirstOrDefault();
 
 if (JobProd != null)
  {
-  Epicor.Customization.Bpm.InfoMessage.Publish("JobProd Found");
+  //Epicor.Customization.Bpm.InfoMessage.Publish("JobProd Found");
   OrderRel = (from OrderRel_Row in Db.OrderRel
   where (OrderRel_Row.Company == JobProd.Company) &&
  (OrderRel_Row.OrderNum == JobProd.OrderNum) &&
@@ -142,7 +142,7 @@ if (OrderRel != null)
 
 if (OrderDtl != null)
  {
-  Epicor.Customization.Bpm.InfoMessage.Publish("OrderDtl Found");
+  //Epicor.Customization.Bpm.InfoMessage.Publish("OrderDtl Found");
   OrderHed = (from OrderHed_Row in Db.OrderHed
  where (OrderHed_Row.Company == OrderRel.Company) &&
  (OrderHed_Row.OrderNum == OrderRel.OrderNum) 
@@ -203,10 +203,12 @@ if (OrderHed != null)
 
  //"\n\nShip By: " + bpmReqDate +
  "\n\nOrder Date:   " + String.Format("{0:M/d/yyyy}",OrderHed.OrderDate) +
+ "\n\nReq Ship Date: " + String.Format("{0:M/d/yyyy}",OrderRel.ReqDate) +
  "\n\nOrder Lines:  " + System.Convert.ToString(OrderHed.TotalLines) +
- "\n" +
+  "\n" +
   "\nShip Via:      " + System.Convert.ToString(OrderRel.ShipViaCode) +
- "\n";
+ "\n" +
+  "\n\nEntered By:  " + System.Convert.ToString(OrderHed.EntryPerson);
  
  
  
