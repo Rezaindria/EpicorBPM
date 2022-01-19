@@ -125,7 +125,8 @@ if (JobProd != null)
   where (OrderRel_Row.Company == JobProd.Company) &&
  (OrderRel_Row.OrderNum == JobProd.OrderNum) &&
  (OrderRel_Row.OrderLine == JobProd.OrderLine) &&
- (OrderRel_Row.OrderRelNum == JobProd.OrderRelNum) 
+ (OrderRel_Row.OrderRelNum == JobProd.OrderRelNum) &&
+ (OrderRel_Row.ShipViaCode == "CPC")
  select OrderRel_Row).FirstOrDefault();
  {
 
@@ -192,6 +193,8 @@ if (OrderHed != null)
  
  // Build Email Body: Order Header
  bpmBody =
+ "\nThe order below has entered the fabrication process and does not have all correct shipping information defined.  Please coordinate with the Customer to document the preferred carrier information on the Manifest tab of the Release within the next 48 hours." +
+ "\n" +
  "\nOrder Number:   " + System.Convert.ToString(OrderHed.OrderNum) +
  "\nPO Number:      " + System.Convert.ToString(OrderHed.PONum) +
  "\n\nCustomer ID:  " + System.Convert.ToString(Cust.CustID) +
