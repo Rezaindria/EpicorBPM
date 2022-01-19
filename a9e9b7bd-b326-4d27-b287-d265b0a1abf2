@@ -18,7 +18,7 @@
 
 string processingDetails = string.Empty;
 string path = @"\\hussv022\c$\Logs\";
-string fileName = "Labor - Send Notification for CPC" + Guid.NewGuid ().ToString () + ".txt";
+string fileName = "TEST Labor - Send Notification for CPC" + Guid.NewGuid ().ToString () + ".txt";
 
 processingDetails = processingDetails + "Starting Labor - Send Notification for CP" + Environment.NewLine;
 
@@ -223,36 +223,6 @@ if (OrderHed != null)
   "\nEntry Person Email: " + System.Convert.ToString(UserFile.EMailAddress);
  
  
- 
-
-try
-{
-// Send Email
-
-//Setup Default email - take this out when done testing
-//bpmTo =  "laurie.knight@us.habasit.com";
-bpmTo = "laurie.knight@habasit.com";
-//bpmCC = vSalesRepEmail + ";laurie.knight@habasit.com" + ";" + vCCShipCustomer;
-
- var mailer = GetMailer(async: true);
- var message = new Ice.Mail.SmtpMail();
- message.SetFrom(bpmFrom);
- message.SetTo(bpmTo);
- message.SetCC(bpmCC);
- message.SetSubject(bpmSubject);
- message.SetBody(bpmBody);
- //Epicor.Customization.Bpm.InfoMessage.Publish("9");
- mailer.Send(message);
-
-}
-catch (Exception ex)
-{
- Epicor.Customization.Bpm.InfoMessage.Publish(ex.ToString());
-}
-
-
-
- 
  }// OrderHed != null
  }// OrderHed
    
@@ -267,14 +237,32 @@ catch (Exception ex)
  }  //JobProd != null
  }  //JobProd
   
-      } // checkit
-        } //LaborDtl.StartActivity
-        
+       
 
 System.IO.File.AppendAllText (path + fileName, processingDetails); 
 
-} //ttlabordtl
-" ExecutionRule="OnceForAllMatching" Id="0" IsAsync="False" RecordMode="Nothing" TerminateOnError="False" ValidationState="Valid" /></DirectiveStep.Action><DirectiveStep.VisualProperties><p:VisualPropertiesStorage><x:Double x:Key="ElementX">376</x:Double><x:Double x:Key="ElementY">211</x:Double><iubd:TextNote Text="{x:Null}" x:Key="Note" Background="Yellow" IsExpanded="False" IsNotifying="True" X="0" Y="0" /></p:VisualPropertiesStorage></DirectiveStep.VisualProperties></DirectiveStep></DirectiveCondition.True><DirectiveCondition.VisualProperties><p:VisualPropertiesStorage><x:Double x:Key="ElementX">591</x:Double><x:Double x:Key="ElementY">205</x:Double><iubd:TextNote Text="{x:Null}" x:Key="Note" Background="Yellow" IsExpanded="False" IsNotifying="True" X="0" Y="0" /><iubd:LinkProperties x:Key="TrueExitLink" DestinationConnectorId="10" SourceConnectorId="7"><iubd:LinkProperties.Points><cm:BindableCollection x:TypeArguments="av:Point" IsNotifying="True"><av:Point>591,250</av:Point><av:Point>496,256</av:Point></cm:BindableCollection></iubd:LinkProperties.Points></iubd:LinkProperties></p:VisualPropertiesStorage></DirectiveCondition.VisualProperties></DirectiveCondition></DirectiveDefinition.StartNode><DirectiveDefinition.Variables><scg:List x:TypeArguments="DirectiveVariable" Capacity="0" /></DirectiveDefinition.Variables><DirectiveDefinition.VisualProperties><p:VisualPropertiesStorage><x:Int32 x:Key="Ice.UI.Bpm.Widgets.CallBpmDataFormViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.CallScWorkflowViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.CustomCodeActionViewModelInstanceCounter">1</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.AttachDataTagViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.RemoveDataTagViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.ConditionViewModelInstanceCounter">1</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.EnablePostProcessingViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.AttachHoldViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.RemoveHoldsViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.InvokeBOMethodViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.InvokeEpicorFunctionViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.InvokeNetMethodViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.NotificationViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.FillTableByQueryViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.UpdateTableByQueryViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.RaiseExceptionViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.SendMailViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.SetArgumentViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.SetBpmDataFieldViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.SetByQueryViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.SetFieldViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.ShowMessageViewModelInstanceCounter">0</x:Int32><x:Double x:Key="ElementX">588</x:Double><x:Double x:Key="ElementY">70</x:Double><iubd:TextNote Text="{x:Null}" x:Key="Note" Background="Yellow" IsExpanded="False" IsNotifying="True" X="0" Y="0" /><iubd:LinkProperties x:Key="ExitLink" DestinationConnectorId="1" SourceConnectorId="4"><iubd:LinkProperties.Points><cm:BindableCollection x:TypeArguments="av:Point" IsNotifying="True"><av:Point>648,160</av:Point><av:Point>651,205</av:Point></cm:BindableCollection></iubd:LinkProperties.Points></iubd:LinkProperties></p:VisualPropertiesStorage></DirectiveDefinition.VisualProperties></DirectiveDefinition>]]></Body>
+
+
+// Send Email
+
+//Setup Default email - take this out when done testing
+//bpmTo =  "laurie.knight@us.habasit.com";
+bpmTo = "laurie.knight@habasit.com";
+//bpmCC = vSalesRepEmail + ";laurie.knight@habasit.com" + ";" + vCCShipCustomer;
+
+ var mailer = GetMailer(async: true);
+ var message = new Ice.Mail.SmtpMail();
+ message.SetFrom(bpmFrom);
+ message.SetTo(bpmTo);
+ message.SetCC(bpmCC);
+ message.SetSubject(bpmSubject);
+ message.SetBody(bpmBody);
+ mailer.Send(message);
+
+     } // checkit
+    } //LaborDtl.StartActivity
+
+} //ttlabordtl" ExecutionRule="OnceForAllMatching" Id="0" IsAsync="False" RecordMode="Nothing" TerminateOnError="False" ValidationState="Valid" /></DirectiveStep.Action><DirectiveStep.VisualProperties><p:VisualPropertiesStorage><x:Double x:Key="ElementX">376</x:Double><x:Double x:Key="ElementY">211</x:Double><iubd:TextNote Text="{x:Null}" x:Key="Note" Background="Yellow" IsExpanded="False" IsNotifying="True" X="0" Y="0" /></p:VisualPropertiesStorage></DirectiveStep.VisualProperties></DirectiveStep></DirectiveCondition.True><DirectiveCondition.VisualProperties><p:VisualPropertiesStorage><x:Double x:Key="ElementX">591</x:Double><x:Double x:Key="ElementY">205</x:Double><iubd:TextNote Text="{x:Null}" x:Key="Note" Background="Yellow" IsExpanded="False" IsNotifying="True" X="0" Y="0" /><iubd:LinkProperties x:Key="TrueExitLink" DestinationConnectorId="10" SourceConnectorId="7"><iubd:LinkProperties.Points><cm:BindableCollection x:TypeArguments="av:Point" IsNotifying="True"><av:Point>591,250</av:Point><av:Point>496,256</av:Point></cm:BindableCollection></iubd:LinkProperties.Points></iubd:LinkProperties></p:VisualPropertiesStorage></DirectiveCondition.VisualProperties></DirectiveCondition></DirectiveDefinition.StartNode><DirectiveDefinition.Variables><scg:List x:TypeArguments="DirectiveVariable" Capacity="0" /></DirectiveDefinition.Variables><DirectiveDefinition.VisualProperties><p:VisualPropertiesStorage><x:Int32 x:Key="Ice.UI.Bpm.Widgets.CallBpmDataFormViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.CallScWorkflowViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.CustomCodeActionViewModelInstanceCounter">1</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.AttachDataTagViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.RemoveDataTagViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.ConditionViewModelInstanceCounter">1</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.EnablePostProcessingViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.AttachHoldViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.RemoveHoldsViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.InvokeBOMethodViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.InvokeEpicorFunctionViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.InvokeNetMethodViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.NotificationViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.FillTableByQueryViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.UpdateTableByQueryViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.RaiseExceptionViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.SendMailViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.SetArgumentViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.SetBpmDataFieldViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.SetByQueryViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.SetFieldViewModelInstanceCounter">0</x:Int32><x:Int32 x:Key="Ice.UI.Bpm.Widgets.ShowMessageViewModelInstanceCounter">0</x:Int32><x:Double x:Key="ElementX">588</x:Double><x:Double x:Key="ElementY">70</x:Double><iubd:TextNote Text="{x:Null}" x:Key="Note" Background="Yellow" IsExpanded="False" IsNotifying="True" X="0" Y="0" /><iubd:LinkProperties x:Key="ExitLink" DestinationConnectorId="1" SourceConnectorId="4"><iubd:LinkProperties.Points><cm:BindableCollection x:TypeArguments="av:Point" IsNotifying="True"><av:Point>648,160</av:Point><av:Point>651,205</av:Point></cm:BindableCollection></iubd:LinkProperties.Points></iubd:LinkProperties></p:VisualPropertiesStorage></DirectiveDefinition.VisualProperties></DirectiveDefinition>]]></Body>
       <SysRevID>System.Byte[]</SysRevID>
       <SysRowID>b55d4326-8d30-4ba2-ba0c-4e7b89828323</SysRowID>
     </Details>
