@@ -20,7 +20,7 @@ string processingDetails = string.Empty;
 string path = @"\\hussv022\c$\Logs\";
 string fileName = "TEST Labor - Send Notification for CPC" + Guid.NewGuid ().ToString () + ".txt";
 
-processingDetails = processingDetails + "Starting Labor - Send Notification for CP" + Environment.NewLine;
+processingDetails = processingDetails + "Starting Labor - Send Notification for CPC" + Environment.NewLine;
 
 Erp.Tables.JobHead JobHead;
 Erp.Tables.JobOper JobOper;
