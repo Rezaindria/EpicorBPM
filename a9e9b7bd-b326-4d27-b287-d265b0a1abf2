@@ -132,7 +132,9 @@ if (JobProd != null)
 
 if (OrderRel != null)
  {
-//  (OrderRel_Row.ShipViaCode == "CPC")
+
+if (OrderRel.ShipViaCode == "CPC")
+{
 
  OrderDtl = (from OrderDtl_Row in Db.OrderDtl
  where (OrderDtl_Row.Company == OrderRel.Company) &&
@@ -222,18 +224,6 @@ if (OrderHed != null)
  
  
  
- 
- }// OrderHed != null
- }//OrderHed
-   
- }// OrderDtl != null
- }//OrderDtl
-
- }  //ODRow
- }  //OrderRel 
- 
-  }  //JobProd != null
- }  //JobProd
 
 try
 {
@@ -262,6 +252,20 @@ catch (Exception ex)
 
 
 
+ 
+ }// OrderHed != null
+ }// OrderHed
+   
+ }// OrderDtl != null
+ }// OrderDtl
+
+ }  //OrderRel.ShipViaCode == "CPC"
+ }  //ODRow
+ }  //OrderRel 
+ 
+ 
+ }  //JobProd != null
+ }  //JobProd
   
       } // checkit
         } //LaborDtl.StartActivity
