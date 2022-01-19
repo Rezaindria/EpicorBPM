@@ -125,14 +125,13 @@ if (JobProd != null)
   where (OrderRel_Row.Company == JobProd.Company) &&
  (OrderRel_Row.OrderNum == JobProd.OrderNum) &&
  (OrderRel_Row.OrderLine == JobProd.OrderLine) &&
- (OrderRel_Row.OrderRelNum == JobProd.OrderRelNum) &&
- (OrderRel_Row.ShipViaCode == "CPC")
+ (OrderRel_Row.OrderRelNum == JobProd.OrderRelNum) 
  select OrderRel_Row).FirstOrDefault();
  {
 
 if (OrderRel != null)
  {
- 
+//  (OrderRel_Row.ShipViaCode == "CPC")
 
  OrderDtl = (from OrderDtl_Row in Db.OrderDtl
  where (OrderDtl_Row.Company == OrderRel.Company) &&
