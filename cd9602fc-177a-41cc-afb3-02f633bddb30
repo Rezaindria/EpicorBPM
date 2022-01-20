@@ -34,6 +34,7 @@ var svc = Ice.Assemblies.ServiceRenderer.GetService<Ice.Contracts.UD24SvcContrac
               Key5 = DateTime.Now.ToString("HHMMssfff"),
               ShortChar01=Environment.MachineName,
               ShortChar02 = DateTime.Now.ToString(),
+              ShortChar03 = Session.PlantID,
               Date01 =DateTime.Now 
              
             }; 
