@@ -195,7 +195,7 @@ if (OrderHed != null)
      if (vCRMCase != "")
        {
      bpmSubject = "TEST - ShipVia Required for Order# " + System.Convert.ToString(OrderHed.OrderNum) + " - " + System.Convert.ToString(Cust.Name) + "[CASE:" + vCRMCase + "]";
-     bpmCC = "Laurie.Knight@habasit.com; case_it@habasit.com";
+     //bpmCC = "Laurie.Knight@habasit.com; case_it@habasit.com";
        }
  
  
