@@ -32,9 +32,7 @@ Erp.Tables.Customer Customer;
 Erp.Tables.UserFile UserFile;
 
 //Ice.Diagnostics.Log.WriteEntry("IN IN IN");
-     
-     
-     
+          
 //Epicor.Customization.Bpm.InfoMessage.Publish("Starting BPM");
 var LDRow = (from row in ttLaborDtl select row).LastOrDefault();
  
@@ -95,6 +93,10 @@ var LDRow = (from row in ttLaborDtl select row).LastOrDefault();
 
      if (checkIt)
      {
+     
+     // First two criteria passed:  LaborDtl.EndActivity = true and JobOper.OpCode = "SW11010"
+     // This next section finds its way to the order release to see if the ShipViaCode = CPC (Customer Preferred Carrier).  If it is CPC, then the rest of the tables are read to create the body of the email.  Then the email is sent.
+     
      //Ice.Diagnostics.Log.WriteEntry("In CheckIt");
      // Compose email
    
@@ -243,7 +245,7 @@ var LDRow = (from row in ttLaborDtl select row).LastOrDefault();
 
       }  //OrderRel.ShipViaCode == "CPC"
 
-      }  //ODRow
+      }  //OrderRel != null
       }  //OrderRel 
              
      }  //JobProd != null
